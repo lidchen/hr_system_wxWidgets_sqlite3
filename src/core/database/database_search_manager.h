@@ -4,6 +4,16 @@
 #include <string>
 #include "core/database/database_ops_base.h"
 
+// For advance search
+// Each col should have default SearchType when create table
+// At advance search user can set search type for each col
+enum class SearchType {
+    EXACT_MATCH,    // For IDs, booleans
+    PARTIAL_MATCH,  // For text fields
+    RANGE,          // For numbers, dates
+    LIST_MATCH      // For dropdown/enum values
+};
+
 class DatabaseSearchManager {
 public:
     DatabaseSearchManager();
@@ -12,6 +22,11 @@ public:
     ~DatabaseSearchManager() = default;
     std::string build_search_sql(const std::string& key);
 private:
+
+    // TODO
+    // This one is for simple search's column range
+    // Show use a dropdown checkbox to select
+    // After implementation of dynamic table make this auto-detected
     struct SearchOptions {
         bool fuzzy_search;
         bool search_first_name;

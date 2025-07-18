@@ -4,7 +4,7 @@
 #include <string>
 
 #include "sqlite3.h"
-#include "core/database/database_manager.h"
+#include "core/database/database.h"
 
 namespace CLIUtil {
     void print_table(const Database& db, const std::string& table_name);

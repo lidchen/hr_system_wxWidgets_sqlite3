@@ -3,8 +3,9 @@
 
 #include "wx/wx.h"
 #include "wx/grid.h"
-#include "core/database/database_manager.h"
+#include "core/database/database.h"
 #include "core/database/database_ops_base.h"
+#include "core/database/database_manager.h"
 
 class DatabaseGridManager {
 public:
@@ -13,6 +14,7 @@ public:
     void clear_grid();
 private:
     wxGrid* wx_grid_ = nullptr; 
+    DatabaseManager& db_manager_ = DatabaseManager::getInstance();
 };
 
 #endif // DATABASE_GRID_H_

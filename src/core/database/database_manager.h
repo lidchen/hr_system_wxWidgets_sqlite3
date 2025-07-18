@@ -1,32 +1,50 @@
 #ifndef DATABASE_MANAGER_H_
 #define DATABASE_MANAGER_H_
 
-#include <sqlite3.h>
+#include "database.h"
 #include <string>
-#include <functional>
+#include <vector>
+#include "wx/wx.h"
 
-#include "database_exception.h"
-#include "database_ops_base.h"
-#include "database_stmt_builder.h"
-#include "database_file_handler.h"
-#include "transaction_manager.h"
-
-
-class Database : public DatabaseOpsBase {
+class DatabaseManager {
 public:
-    explicit Database (const std::string& filename);
-    Database (const Database& other) = delete;
-    Database& operator= (const Database& other) = delete;
-    ~Database ();
-    void import_from_csv(const std::string& filepath);
-    void begin_transaction();
-    void commit_transaction();
-    void rollback_transaction();
-    void debug_state() const;
-    std::unique_ptr<DatabaseFileHandler> file_handler_;
+    static DatabaseManager& getInstance() {
+        static DatabaseManager instance;
+        return instance;
+    }
+
+    DatabaseManager(const DatabaseManager&) = delete;
+    DatabaseManager& operator=(const DatabaseManager&) = delete;
+
+    // TODO: This one should call wxselectfolder
+    wxString get_database_dir() const;
+    wxString generate_formatted_db_name(const wxString &db_raw_input_name) const;
+    wxString generate_full_db_name(const wxString &db_name) const;
+    std::vector<std::string> get_db_names() const;
+
+    void set_database_dir(const wxString& dir_path);
+    void scan_databases();
+    void create_database(const wxString &db_name);
+
+    // Shouldn't put this feature in real application
+    // I know its not good to indentify using string
+    // But since same db_name cannot use twice
+    // This could works now
+    void delete_database(const wxString &db_name);
+    void set_current_database(const wxString db_name);
+    // void set_current_database_index(int index);
+
+    void open_current_database();
+    void close_current_database();
+    // Returns a pointer to the current database, or nullptr if not set
+    Database* get_current_database();
 private:
-    // Rename this to distinguish base class's db_ and this db
-    std::unique_ptr<TransactionManager> transaction_manager_;
+    // Store all databases
+    std::vector<std::unique_ptr<Database>> database_container_;
+    Database* current_database_ = nullptr;
+    std::string dir_path_ = "/Users/lid/Library/CloudStorage/OneDrive-Personal/Develop/work/hm_system/resources/sql";
+    DatabaseManager() = default;
+    ~DatabaseManager() = default;
 };
 
-#endif
+#endif // DATABASE_MANAGER_H_
