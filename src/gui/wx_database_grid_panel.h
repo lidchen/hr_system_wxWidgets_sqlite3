@@ -4,7 +4,7 @@
 #include "wx/wx.h"
 #include "wx/grid.h"
 #include "database_grid_manager.h"
-#include "core/database/database_manager.h"
+#include "core/database/database.h"
 
 class wxDatabaseGridPanel: public wxPanel {
 public:
