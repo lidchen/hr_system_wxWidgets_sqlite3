@@ -1,8 +1,10 @@
 #include "database_manager.h"
-#include "gui/dialog/wx_get_folder_path_dialog.h"
+
 #include "wx/dirdlg.h"
 #include "wx/dir.h"
 #include "wx/filename.h"
+
+#include "gui/dialog/wx_get_folder_path_dialog.h"
 
 wxString DatabaseManager::get_database_dir() const {
     return dir_path_;

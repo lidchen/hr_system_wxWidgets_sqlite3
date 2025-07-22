@@ -36,12 +36,19 @@ public:
             DatabaseManager& db_manager = DatabaseManager::getInstance();
             db_manager.scan_databases();
             db_manager.set_current_database("test.sql");
+            auto db = db_manager.get_current_database();
+            assert(db->is_connected());
             wxFrame* main_frame = new wxFrame(nullptr, wxID_ANY, "test", wxDefaultPosition, wxSize(700, 500));
             main_frame->Show();
-// TEST
-auto* test = new wxTableSchemaDialog(main_frame);
-test->ShowModal();
-
+            // TEST
+            // auto* test = new wxTableSchemaDialog(main_frame);
+            auto* test = new wxTableManagerDialog(main_frame);
+            if (test->ShowModal() != wxID_NONE) {
+                main_frame->Close();
+            } else {
+                main_frame->Close();
+            }
+            delete test;
             // DatabaseGridManager* db_grid = new DatabaseGridManager(main_frame, &db);
             // wxDatabaseGridPanel* grid_panel = new wxDatabaseGridPanel(main_frame, db);
 

@@ -4,13 +4,12 @@
 #include "wx/wx.h"
 #include "wx/grid.h"
 #include "core/database/database.h"
-#include "core/database/database_ops_base.h"
 #include "core/database/database_manager.h"
 
 class DatabaseGridManager {
 public:
     DatabaseGridManager(wxGrid* grid);
-    void construct_by_result(const DatabaseOpsBase::QueryResult& q_result);
+    void construct_by_result(const Database::QueryResult& q_result);
     void clear_grid();
 private:
     wxGrid* wx_grid_ = nullptr; 

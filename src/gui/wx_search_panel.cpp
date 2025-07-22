@@ -1,5 +1,3 @@
-#include "wx/wx.h"
-#include "wx/checkbox.h"
 #include "wx_search_panel.h"
 
 wxSearchPanel::wxSearchPanel(wxPanel* parent)

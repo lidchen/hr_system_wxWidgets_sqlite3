@@ -2,7 +2,6 @@
 #define DATABASE_SEARCH_MANAGER_H_
 
 #include <string>
-#include "core/database/database_ops_base.h"
 
 // For advance search
 // Each col should have default SearchType when create table

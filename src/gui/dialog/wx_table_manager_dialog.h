@@ -19,7 +19,7 @@ private:
     void list_tables();
     void on_create_table(wxCommandEvent& event);
     void on_load_tables(wxCommandEvent& event);
-    void on_deleted_selected_table(wxCommandEvent& event);
+    void on_drop_selected_table(wxCommandEvent& event);
     void on_ok(wxCommandEvent& event) override;
     void on_cancel(wxCommandEvent& event) override;
 };

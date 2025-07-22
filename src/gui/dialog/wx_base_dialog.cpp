@@ -14,6 +14,9 @@ wxBaseDialog::wxBaseDialog(wxWindow* parent, const wxString& name)
     btn_panel->SetSizer(btn_sizer);
 
     content_panel_ = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    content_sizer_ = new wxBoxSizer(wxVERTICAL);
+    content_panel_->SetSizer(content_sizer_);
+
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
     main_sizer->Add(content_panel_, 1, wxEXPAND | wxALL, 10);
     main_sizer->Add(btn_panel, 0, wxEXPAND | wxALL, 10);
@@ -30,6 +33,7 @@ wxBaseDialog::wxBaseDialog(wxWindow* parent, const wxString& name)
     Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { EndModal(wxID_OK); }, wxID_OK);
     Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { EndModal(wxID_CANCEL); }, wxID_CANCEL);
     Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent&) { EndModal(wxID_CANCEL); });
+    Bind(wxEVT_CHAR_HOOK, &wxBaseDialog::on_escape, this);
 }
 void wxBaseDialog::on_ok(wxCommandEvent& event){
     if (auto* btn = dynamic_cast<wxButton*>(event.GetEventObject())) {
@@ -39,5 +43,12 @@ void wxBaseDialog::on_ok(wxCommandEvent& event){
 void wxBaseDialog::on_cancel(wxCommandEvent& event) {
     if (auto* btn = dynamic_cast<wxButton*>(event.GetEventObject())) {
         btn->SetFocus();
+    }
+}
+void wxBaseDialog::on_escape(wxKeyEvent& event) {
+    if (event.GetKeyCode() == WXK_ESCAPE) {
+        EndModal(wxID_CANCEL);
+    } else {
+        event.Skip();
     }
 }

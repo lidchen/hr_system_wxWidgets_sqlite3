@@ -7,7 +7,7 @@ DatabaseGridManager::DatabaseGridManager(wxGrid* grid)
 // temp, for debug
 // construct_by_result(db->fetch_all("SELECT * FROM employee"));
 }
-void DatabaseGridManager::construct_by_result(const DatabaseOpsBase::QueryResult& q_result) {
+void DatabaseGridManager::construct_by_result(const Database::QueryResult& q_result) {
     clear_grid(); 
     const int row_num = q_result.row_num_;    
     const int col_num = q_result.col_num_;    

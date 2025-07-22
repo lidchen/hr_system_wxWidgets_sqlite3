@@ -1,10 +1,10 @@
-#include "database_stmt_builder.h"
-
+#include <iostream>
 #include <string>
 #include <vector>
 
+#include "database_stmt_builder.h"
+
 #include "sqlite3.h"
-#include <iostream>
 
 DatabaseStmtBuilder& DatabaseStmtBuilder::create_table(const std::string& table_name) {
     stmt_ = "CREATE TABLE " + table_name + "(";

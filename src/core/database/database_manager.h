@@ -1,9 +1,10 @@
 #ifndef DATABASE_MANAGER_H_
 #define DATABASE_MANAGER_H_
-
-#include "database.h"
 #include <string>
 #include <vector>
+
+#include "database.h"
+
 #include "wx/wx.h"
 
 class DatabaseManager {
