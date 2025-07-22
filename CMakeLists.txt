@@ -31,12 +31,13 @@ add_executable(hm_system
     ${SRC_DIR}/gui/dialog/wx_base_dialog.cpp
     ${SRC_DIR}/gui/dialog/wx_database_manager_dialog.cpp
     ${SRC_DIR}/gui/dialog/wx_get_folder_path_dialog.cpp
+    ${SRC_DIR}/gui/dialog/wx_table_schema_dialog.cpp
     ${SRC_DIR}/gui/database_grid_manager.cpp
     ${SRC_DIR}/gui/wx_database_grid_panel.cpp
     ${SRC_DIR}/gui/wx_search_panel.cpp
-    # ${SRC_DIR}/gui/wx_test.cpp
+    ${SRC_DIR}/gui/wx_test.cpp
     ${SRC_DIR}/cli/cli_util.cpp
-    ${SRC_DIR}/hr_system.cpp
+    # ${SRC_DIR}/hr_system.cpp
 )
 target_include_directories(hm_system PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries (hm_system SQLite::SQLite3 ${wxWidgets_LIBRARIES})
