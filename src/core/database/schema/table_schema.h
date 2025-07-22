@@ -15,6 +15,9 @@ struct TableSchema {
         sql += ")";
         return sql; 
     }
+    int get_row_num() {
+        return col_defs_.size();
+    }
 };
 
 #endif // TABLE_SCHEMA_H_

@@ -41,8 +41,8 @@ public:
             wxFrame* main_frame = new wxFrame(nullptr, wxID_ANY, "test", wxDefaultPosition, wxSize(700, 500));
             main_frame->Show();
             // TEST
-            // auto* test = new wxTableSchemaDialog(main_frame);
-            auto* test = new wxTableManagerDialog(main_frame);
+            auto* test = new wxTableSchemaDialog(main_frame);
+            // auto* test = new wxTableManagerDialog(main_frame);
             if (test->ShowModal() != wxID_NONE) {
                 main_frame->Close();
             } else {

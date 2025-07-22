@@ -3,35 +3,47 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
+
 #include "database.h"
-#include "core/database/stmt_builder/table_schema.h"
+#include "core/database/schema/table_schema.h"
 
 class DatabaseTableManager {
 public:
     DatabaseTableManager(Database* db) : db_(db) {
         scan_existing_tables();
+        // Hack, set default table name to first one
+        if (!table_schemas_.empty()) {
+            current_table_name_ = table_schemas_.begin()->first;
+        } else {
+            throw DatabaseException("current table is empty");
+        }
     }
     DatabaseTableManager(const DatabaseTableManager&) = delete;
     DatabaseTableManager& operator=(const DatabaseTableManager&) = delete;
 
     // Table Operations
     void create_table(const TableSchema& table_schema);
-    void create_table(const wxString &table_name);
-    void drop_table(const wxString &selected_tb_name);
-    std::string get_current_table_name();
-    void set_current_table_name();
+    void create_table(const wxString& table_name);
+    void drop_table(const wxString& selected_tb_name);
+
+    void set_current_table_name(const std::string& table_name);
+    std::vector<std::string> get_table_names() const;
+    std::string get_current_table_name() const;
+    TableSchema get_current_table_schema() const;
     // void drop_table(const std::string& table_name);
 
     // Schema Operations
     
     // Column Operations
-
-    std::vector<std::string> get_table_names() const;
+    void add_column(const ColumnDefinition& col_def);
+    void drop_column(const std::string& col_name);
 private:
+    std::string current_table_name_;
+    Database* db_; // Current Database
     void scan_existing_tables();
     TableSchema fetch_table_schema(const std::string table_name);
-    Database *db_;
-    std::vector<TableSchema> table_schemas_;    
+    std::unordered_map<std::string, TableSchema> table_schemas_;
 };
 
 

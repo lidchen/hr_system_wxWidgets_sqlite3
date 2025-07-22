@@ -3,7 +3,7 @@
 LabeledTextCtrl::LabeledTextCtrl(wxWindow* parent, wxWindowID id
                                 , const wxString& label, const wxString& value
                                 , const wxPoint& pos, const wxSize& size, long style) 
-                                : wxPanel(parent, id, pos, size, style)
+                                : wxPanel(parent, id, pos, size)
 {
     setup(label, value);
 }

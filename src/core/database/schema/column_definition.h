@@ -34,12 +34,20 @@ struct ColumnDefinition {
     ColumnConstraint constraints_ = ColumnConstraint::NONE;
     std::string default_value_;
     ColumnDefinition() = default;
+    ColumnDefinition(const std::string& name, const std::string& type, const std::string& constraints) {
+        name_ = name;
+        type_ = string_to_type(type);
+        constraints_ = string_to_constraints(constraints);
+    }
     ColumnDefinition(const std::vector<std::string>& row_values) {
         generate_from_pragma_sql(row_values);
     } 
-
-// TODO:
-// std::vector<std::string> allowed_values;
+    // void set_type_from_string(const std::string& str) {
+    //     type_ = string_to_type(str);
+    // }
+    // void set_constraints_from_string(const std::string& str) {
+    //     constraints_ = string_to_constraints(str);
+    // }
 
     // TODO:
     // we fucked, the pragma_sql dont give information of AUTO_INCREMENT and UNIQUE
@@ -66,12 +74,19 @@ struct ColumnDefinition {
     }
 
     std::string col_def_to_string() const {
-        std::string col_def_sql = name_ + " " + type_to_string(type_);
+        std::string col_def_sql = name_ + " " + type_to_string();
+        col_def_sql += " ";
+        col_def_sql += constraints_to_string();
+        return col_def_sql;
+    }
+
+    std::string constraints_to_string() const {
+        std::string sql = "";
         if (has_constraint(constraints_, ColumnConstraint::PRIMARY_KEY)) {
-            col_def_sql += " PRIMARY KEY";
+            sql += " PRIMARY KEY";
         }
         if (has_constraint(constraints_, ColumnConstraint::NOT_NULL)) {
-            col_def_sql += " NOT NULL";
+            sql += " NOT NULL";
         }
         // if (has_constraint(constraints_, ColumnConstraint::UNIQUE)) {
         //     col_def_sql += " UNIQUE";
@@ -80,14 +95,27 @@ struct ColumnDefinition {
         //     col_def_sql += " AUTOINCREMENT";
         // }
         if (!default_value_.empty()) {
-            col_def_sql += " DEFAULT '" + default_value_ + "'";
+            sql += " DEFAULT '" + default_value_ + "'";
         }
-        return col_def_sql;
+        return sql;
     }
 
-private:
-    std::string type_to_string(ColumnType type) const {
-        switch (type)
+    ColumnConstraint string_to_constraints(const std::string& constraint_str) {
+        ColumnConstraint constraints = ColumnConstraint::NONE;
+        std::string str = constraint_str;
+        std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+
+        if (str.find("PRIMARY KEY") != std::string::npos) {
+            constraints = constraints | ColumnConstraint::PRIMARY_KEY;
+        }
+        if (str.find("NOT NULL") != std::string::npos) {
+            constraints = constraints | ColumnConstraint::NOT_NULL;
+        }
+        return constraints;
+    }
+
+    std::string type_to_string() const {
+        switch (type_)
         {
             case ColumnType::TEXT: return "TEXT";
             case ColumnType::INTEGER: return "INTEGER";
@@ -97,6 +125,7 @@ private:
             default: return "TEXT";
         }
     }
+
     ColumnType string_to_type(std::string type_str) const {
         if (type_str.find("TEXT") != std::string::npos) {
             return ColumnType::TEXT;
