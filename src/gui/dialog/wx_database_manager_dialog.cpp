@@ -11,14 +11,11 @@ wxDatabaseManagerDialog::wxDatabaseManagerDialog(wxWindow* parent)
     ID_database_name_ = wxWindow::NewControlId();
 
     // DB DIR HANDLE
-    // LabeledTextCtrl* db_name_panel = new LabeledTextCtrl(content_panel_, wxID_ANY, wxT("Database Name")
-    //                                                     , wxT(""), wxDefaultPosition, wxDefaultSize);
     HorizontalPanel* db_dir_panel = new HorizontalPanel(content_panel_);
     wxStaticText* db_dir_st = new wxStaticText(db_dir_panel, wxID_ANY, wxT("Current db path: "));
     db_dir_st_path_ = new wxTextCtrl(db_dir_panel, wxID_ANY
                                     , db_manager_.get_database_dir(), wxDefaultPosition
                                     , wxDefaultSize, wxTE_READONLY | wxBORDER_NONE);
-    // db_dir_st_path_->SetBackgroundColour(db_dir_panel->GetBackgroundColour());
 
     wxButton* db_dir_btn = new wxButton(content_panel_, wxID_ANY, "set dir");
     db_dir_btn->Bind(wxEVT_BUTTON, &wxDatabaseManagerDialog::on_set_dir, this);
@@ -26,8 +23,6 @@ wxDatabaseManagerDialog::wxDatabaseManagerDialog(wxWindow* parent)
 
     // LIST BOX SHOW DB IN DB_DIR
     db_listbox_ = new Listbox(content_panel_);
-// db_listbox_->list_panel_->SetBackgroundColour(*wxLIGHT_GREY);
-// db_listbox_->btn_panel_->SetBackgroundColour(*wxLIGHT_GREY);
     wxButton* new_btn = new wxButton(db_listbox_->btn_panel_, wxID_ANY, "New");
     wxButton* rename_btn = new wxButton(db_listbox_->btn_panel_, wxID_ANY, "Rename");
     wxButton* delete_btn = new wxButton(db_listbox_->btn_panel_, wxID_ANY, "Delete");
@@ -35,17 +30,13 @@ wxDatabaseManagerDialog::wxDatabaseManagerDialog(wxWindow* parent)
     db_listbox_->add_btn(rename_btn);
     db_listbox_->add_btn(delete_btn);
     
-    // wxPanel* test = new wxPanel(content_panel_, wxID_ANY);
-    // test->SetBackgroundColour(*wxLIGHT_GREY); // Optional: to make it visible
-
     wxBoxSizer* content_sizer = new wxBoxSizer(wxVERTICAL);
-    // content_sizer->Add(db_name_panel);
     content_sizer->Add(0, 10); 
     content_sizer->Add(db_dir_btn);
     content_sizer->Add(0, 10); 
     content_sizer->Add(db_dir_panel);
     content_sizer->Add(0, 10);
-    content_sizer->Add(db_listbox_, 1, wxEXPAND | wxALL, 0); // proportion=1, wxEXPAND
+    content_sizer->Add(db_listbox_, 1, wxEXPAND | wxALL, 0);
 
     content_panel_->SetSizer(content_sizer);
 
@@ -57,6 +48,7 @@ wxDatabaseManagerDialog::wxDatabaseManagerDialog(wxWindow* parent)
 
     Bind(wxEVT_BUTTON, &wxDatabaseManagerDialog::on_ok, this, wxID_OK);
     Bind(wxEVT_BUTTON, &wxDatabaseManagerDialog::on_cancel, this, wxID_CANCEL);
+    db_listbox_->Bind(wxEVT_LISTBOX_DCLICK, &wxDatabaseManagerDialog::on_db_click_select, this);
 }
 
 // call this after set dir
@@ -68,6 +60,22 @@ void wxDatabaseManagerDialog::list_database() {
         db_listbox_->append_to_list(db_name);
     }
 }
+
+Database* wxDatabaseManagerDialog::get_selected_database() {
+    return db_manager_.get_current_database();
+}
+
+bool wxDatabaseManagerDialog::set_selected_database() {
+    auto selected_db_name = db_listbox_->get_selected_value();
+    if(!selected_db_name.empty()) {
+        db_manager_.set_current_database(selected_db_name);
+        return true;
+    } else {
+        wxLogError("Please select a database");
+        return false;
+    }
+}
+
 void wxDatabaseManagerDialog::on_set_dir(wxCommandEvent& event) {
     auto cb = [this](const wxString& path) {
         db_dir_st_path_->SetLabel(path);
@@ -109,11 +117,17 @@ void wxDatabaseManagerDialog::on_delete_selected_database(wxCommandEvent& event)
     db_manager_.delete_database(selected_db_name);
     db_listbox_->remove_selection();
 }
-void wxDatabaseManagerDialog::on_ok(wxCommandEvent& event) {
-    wxString selected_db_name = db_listbox_->get_selected_value();
-    db_manager_.set_current_database(selected_db_name);
-    Destroy();
+void wxDatabaseManagerDialog::on_db_click_select(wxCommandEvent& event) {
+    if (set_selected_database()) {
+        EndModal(wxID_OK);
+    }
 }
+void wxDatabaseManagerDialog::on_ok(wxCommandEvent& event) {
+    if(set_selected_database()) {
+        EndModal(wxID_OK);
+    }
+}
+
 void wxDatabaseManagerDialog::on_cancel(wxCommandEvent& event) {
-    Destroy();
+    EndModal(wxID_CANCEL);
 }

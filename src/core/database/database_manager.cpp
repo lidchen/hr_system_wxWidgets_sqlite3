@@ -6,6 +6,15 @@
 
 #include "gui/dialog/wx_get_folder_path_dialog.h"
 
+void DatabaseManager::init() {
+    // The dafault path might not contain db
+    // This dont make sure set a valid current database
+    // Need handle error at dialogs might crashed because of null current db
+    scan_databases();
+    if (!database_container_.empty()) {
+        current_database_ = database_container_[0].get();
+    }
+}
 wxString DatabaseManager::get_database_dir() const {
     return dir_path_;
 }

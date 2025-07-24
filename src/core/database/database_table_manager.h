@@ -10,15 +10,7 @@
 
 class DatabaseTableManager {
 public:
-    DatabaseTableManager(Database* db) : db_(db) {
-        scan_existing_tables();
-        // Hack, set default table name to first one
-        if (!table_schemas_.empty()) {
-            current_table_name_ = table_schemas_.begin()->first;
-        } else {
-            throw DatabaseException("current table is empty");
-        }
-    }
+    DatabaseTableManager(Database* db);
     DatabaseTableManager(const DatabaseTableManager&) = delete;
     DatabaseTableManager& operator=(const DatabaseTableManager&) = delete;
 

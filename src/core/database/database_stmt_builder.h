@@ -19,6 +19,10 @@ public:
     DatabaseStmtBuilder& select(const std::string& select_columns);
     DatabaseStmtBuilder& from(const std::string& table_name);
 
+    // UPDATE
+    DatabaseStmtBuilder& update(const std::string& table_name);
+    DatabaseStmtBuilder& set(const std::string& col_name, const std::string& new_value);
+
     WhereBuilder where();
 
     DatabaseStmtBuilder& group_by(const std::string &grouped_columns);

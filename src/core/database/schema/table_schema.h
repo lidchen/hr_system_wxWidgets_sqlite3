@@ -1,23 +1,25 @@
 #ifndef TABLE_SCHEMA_H_
 #define TABLE_SCHEMA_H_
 
+#include <vector>
+#include <string>
 #include "column_definition.h"
 
-struct TableSchema {
+class TableSchema {
+public:
     std::string table_name_;
     std::vector<ColumnDefinition> col_defs_;
-    std::string build_sql() const {
-        std::string sql = "CREATE TABLE " + table_name_ + " (";
-        for (size_t i = 0; i < col_defs_.size(); ++i) {
-            sql += " " + col_defs_[i].col_def_to_string();
-            if (i < col_defs_.size() - 1) sql += ",";
-        }
-        sql += ")";
-        return sql; 
-    }
-    int get_row_num() {
-        return col_defs_.size();
-    }
+
+    std::vector<std::string> get_col_names() const;
+    std::string build_sql() const;
+    std::string get_pk_name() const;
+    int get_pk_index() const;
+    int get_row_num();
+    // bool validate(int col, std::string new_value);
+private:
+    bool is_integer(const std::string& str);
+    bool is_float(const std::string& str);
+    bool is_bool(const std::string& str);
 };
 
 #endif // TABLE_SCHEMA_H_

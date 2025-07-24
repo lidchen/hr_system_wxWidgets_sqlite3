@@ -4,17 +4,19 @@
 #include "wx/wx.h"
 #include "wx/grid.h"
 #include "database_grid_manager.h"
+#include "core/database/database_table_manager.h"
 #include "core/database/database.h"
 
 class wxDatabaseGridPanel: public wxPanel {
 public:
     wxDatabaseGridPanel(wxFrame* parent, Database* db);
-    wxDatabaseGridPanel(const wxDatabaseGridPanel& other) = delete;
+    wxDatabaseGridPanel(const wxDatabaseGridPanel &other) = delete;
     wxDatabaseGridPanel& operator= (const wxDatabaseGridPanel& other) = delete;
     ~wxDatabaseGridPanel() = default;
     void on_search(wxCommandEvent& event);
-    void setup();
 private:
+    void setup();
+
 // TODO
     struct SearchPrefer {
         bool search_first_name;
@@ -33,7 +35,7 @@ private:
     wxButton* search_btn_;
 
     Database* db_;
-    Database* db_backup_;
+    std::string table_name_;
     int ID_search_tc;
     int ID_search_btn;
 };

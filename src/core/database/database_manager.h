@@ -17,6 +17,9 @@ public:
     DatabaseManager(const DatabaseManager&) = delete;
     DatabaseManager& operator=(const DatabaseManager&) = delete;
 
+    // set default database to avoid undefined behavior
+    void init();
+
     // TODO: This one should call wxselectfolder
     wxString get_database_dir() const;
     wxString generate_formatted_db_name(const wxString &db_raw_input_name) const;

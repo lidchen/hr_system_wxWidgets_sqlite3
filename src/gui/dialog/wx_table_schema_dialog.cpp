@@ -6,48 +6,51 @@
 wxTableSchemaDialog::wxTableSchemaDialog(wxWindow* parent) 
     : wxBaseDialog(parent, "Table Schema") 
 {
+    // INIT STUFF
     DatabaseManager& db_manager = DatabaseManager::getInstance();
     tb_manager_ = std::make_unique<DatabaseTableManager>(db_manager.get_current_database());
 
     HorizontalPanel* current_table_panel = new HorizontalPanel(content_panel_);
     wxStaticText* st = new wxStaticText(current_table_panel, wxID_ANY, "Current Table:");
     table_selection_box = new wxChoice(current_table_panel, wxID_ANY);
+
+    // GUI
+    wxPanel* h_panel = new wxPanel(content_panel_, wxID_ANY);
+    grid_ = new wxGrid(h_panel, wxID_ANY);
+    wxPanel* btn_panel = new wxPanel(h_panel, wxID_ANY);
+    wxBoxSizer* h_sizer = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* btn_sizer = new wxBoxSizer(wxVERTICAL);
+    add_btn = new wxButton(btn_panel, wxID_ANY, "Add");
+    wxButton* alter_btn = new wxButton(btn_panel, wxID_ANY, "Alter");
+    wxButton* delete_btn = new wxButton(btn_panel, wxID_ANY, "Delete");
+
+    wxBoxSizer* grid_sizer = new wxBoxSizer(wxHORIZONTAL);
+    grid_->CreateGrid(0, 3);
+    construct_grid();
+    grid_sizer->Add(grid_, 1, wxEXPAND);
+
+    // table selection box
     auto table_names = tb_manager_->get_table_names();
     for (const auto& name : table_names) {
         table_selection_box->Append(name);
     }
     current_table_panel->add_children(st, table_selection_box);
 
-    wxPanel* h_panel = new wxPanel(content_panel_, wxID_ANY);
-    wxPanel* btn_panel = new wxPanel(h_panel, wxID_ANY);
-    wxBoxSizer* grid_sizer = new wxBoxSizer(wxHORIZONTAL);
-    grid_ = new wxGrid(h_panel, wxID_ANY);
-    grid_sizer->Add(grid_, 1, wxEXPAND);
-
-    content_sizer_->Add(current_table_panel);
-    content_sizer_->Add(h_panel);
-
-    grid_->CreateGrid(0, 3);
-    construct_grid();
-
-    wxBoxSizer* h_sizer = new wxBoxSizer(wxHORIZONTAL);
-    h_sizer->Add(grid_, 2, wxALL, 10);
-    h_sizer->Add(btn_panel, 0, wxALL, 10);
-
-    add_btn = new wxButton(btn_panel, wxID_ANY, "add");
-    wxButton* alter_btn = new wxButton(btn_panel, wxID_ANY, "alter");
-    wxButton* delete_btn = new wxButton(btn_panel, wxID_ANY, "delete");
-    wxBoxSizer* btn_sizer = new wxBoxSizer(wxVERTICAL);
     btn_sizer->Add(add_btn, 0, wxALL, 10);
     btn_sizer->Add(alter_btn, 0, wxALL, 10);
     btn_sizer->Add(delete_btn, 0, wxALL, 10);
-
     btn_panel->SetSizer(btn_sizer);
     h_panel->SetSizer(h_sizer);
+    h_sizer->Add(grid_, 2, wxALL, 10);
+    h_sizer->Add(btn_panel, 0, wxALL, 10);
     content_panel_->SetSizer(content_sizer_);
-    content_panel_->Layout();
+    content_sizer_->Add(current_table_panel);
+    content_sizer_->Add(h_panel);
 
+    content_panel_->Layout();
     list_schemas();
+
+    // BIND
     table_selection_box->Bind(wxEVT_CHOICE, &wxTableSchemaDialog::on_select_table, this);
     add_btn->Bind(wxEVT_BUTTON, &wxTableSchemaDialog::on_add, this);
     delete_btn->Bind(wxEVT_BUTTON, &wxTableSchemaDialog::on_drop_column, this);
@@ -128,8 +131,11 @@ void wxTableSchemaDialog::on_add(wxCommandEvent& event) {
     type_choices.Add("TEXT");
     type_choices.Add("INTEGER");
     type_choices.Add("FLOAT");
-    type_choices.Add("DATE");
     type_choices.Add("BOOLEAN");
+    type_choices.Add("DATE");
+    type_choices.Add("DATETIME");
+    type_choices.Add("YEAR");
+
     grid_->SetCellEditor(last_row_index, 1, new wxGridCellChoiceEditor(type_choices));
 
     // Column 2: Choice editor for constraints

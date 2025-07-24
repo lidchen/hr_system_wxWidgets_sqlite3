@@ -4,14 +4,24 @@
 DatabaseGridManager::DatabaseGridManager(wxGrid* grid)
     : wx_grid_(grid)
 {
-// temp, for debug
-// construct_by_result(db->fetch_all("SELECT * FROM employee"));
 }
+
+void DatabaseGridManager::construct_grid(const TableSchema& schema) {
+    // for (const auto& col_def : schema.col_defs_) {
+
+    // }
+}
+
+// TODO: This could only work of set values, cant be used for construct grid
 void DatabaseGridManager::construct_by_result(const Database::QueryResult& q_result) {
     clear_grid(); 
-    const int row_num = q_result.row_num_;    
-    const int col_num = q_result.col_num_;    
-    wx_grid_->CreateGrid(row_num, col_num);
+    const int row_num = q_result.row_num_; 
+    const int col_num = q_result.col_num_;
+    if (row_num == 0) {
+        wx_grid_->CreateGrid(10, col_num);
+    } else {
+        wx_grid_->CreateGrid(row_num, col_num);
+    }
     wx_grid_->SetRowLabelSize(50);
     wx_grid_->SetColLabelSize(25);
     wx_grid_->SetRowLabelAlignment(wxALIGN_RIGHT, wxALIGN_CENTER);

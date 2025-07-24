@@ -1,11 +1,13 @@
+#include <assert.h>
 #include "wx_table_manager_dialog.h"
+
 #include "core/database/database.h"
+#include "wx_table_schema_dialog.h"
 
 wxTableManagerDialog::wxTableManagerDialog(wxWindow* parent)
     : wxBaseDialog(parent, "Table Manager")
 {
     db_ = db_manager_.get_current_database();
-assert(db_->is_connected());
     tb_manager_ = std::make_unique<DatabaseTableManager>(db_);
 
     tb_listbox_ = new Listbox(content_panel_);
@@ -25,6 +27,8 @@ assert(db_->is_connected());
 
     new_btn->Bind(wxEVT_BUTTON, &wxTableManagerDialog::on_create_table, this);
     delete_btn->Bind(wxEVT_BUTTON, &wxTableManagerDialog::on_drop_selected_table, this);
+    tb_listbox_->list_panel_->Bind(wxEVT_COMMAND_LISTBOX_SELECTED, &wxTableManagerDialog::on_select, this);
+    tb_listbox_->list_panel_->Bind(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, &wxTableManagerDialog::on_db_click_select, this);
 }
 
 void wxTableManagerDialog::list_tables() {
@@ -52,6 +56,23 @@ void wxTableManagerDialog::on_drop_selected_table(wxCommandEvent& event) {
     wxString selected_tb_name = tb_listbox_->get_selected_value();
     tb_manager_->drop_table(selected_tb_name);
     tb_listbox_->remove_selection();
+}
+
+void wxTableManagerDialog::show_schema_dialog() {
+    wxTableSchemaDialog* schema_dlg = new wxTableSchemaDialog(this);
+    schema_dlg->ShowModal();
+    schema_dlg->Destroy();
+}
+
+void wxTableManagerDialog::on_select(wxCommandEvent& event) {
+    wxString selected_tb_name = tb_listbox_->get_selected_value();
+    tb_manager_->set_current_table_name(selected_tb_name.ToStdString());
+}
+
+void wxTableManagerDialog::on_db_click_select(wxCommandEvent& event) {
+    wxString selected_tb_name = tb_listbox_->get_selected_value();
+    tb_manager_->set_current_table_name(selected_tb_name.ToStdString());
+    show_schema_dialog();
 }
 
 void wxTableManagerDialog::on_ok(wxCommandEvent& event) {

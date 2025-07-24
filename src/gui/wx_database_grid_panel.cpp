@@ -8,11 +8,11 @@ wxDatabaseGridPanel::wxDatabaseGridPanel(wxFrame* parent, Database* db)
     setup();
 }
 
-// This is really bad approach, grid_ has not been init
-// Structure is a mess, lots of unnessary variable passing
 void wxDatabaseGridPanel::setup() {
     ID_search_tc = wxWindow::NewControlId();
     ID_search_btn = wxWindow::NewControlId();
+
+    // TODO:
 
     // SEARCH PANEL
     search_panel_ = new wxPanel(this, wxID_ANY, wxPoint(-1, -1), wxDefaultSize);
@@ -40,6 +40,7 @@ void wxDatabaseGridPanel::setup() {
     grid_ = new wxGrid(this, wxID_ANY);
     grid_manager_ = new DatabaseGridManager(grid_);
 
+    // TEMP
     grid_manager_->construct_by_result(db_->fetch_all("SELECT * FROM employee"));
 
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);

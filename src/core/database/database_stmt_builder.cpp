@@ -30,6 +30,18 @@ DatabaseStmtBuilder& DatabaseStmtBuilder::from(const std::string& table_name) {
     stmt_ += "FROM " + table_name + " ";
     return *this;
 }
+
+// UPDATE
+DatabaseStmtBuilder& DatabaseStmtBuilder::update(const std::string& table_name) {
+    stmt_ = "UPDATE " + table_name + " ";
+    return *this;
+}
+
+DatabaseStmtBuilder& DatabaseStmtBuilder::set(const std::string& col_name, const std::string& new_value) {
+    stmt_ += "SET " + col_name + " = '" + new_value + "' ";
+    return *this;
+}
+
 // Not sure about this implematation
 WhereBuilder DatabaseStmtBuilder::where() {
     return WhereBuilder(stmt_);

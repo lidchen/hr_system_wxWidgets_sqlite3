@@ -16,10 +16,13 @@ private:
     std::unique_ptr<DatabaseTableManager> tb_manager_;
     Listbox* tb_listbox_;
     Database* db_;
+    void show_schema_dialog();
     void list_tables();
     void on_create_table(wxCommandEvent& event);
     void on_load_tables(wxCommandEvent& event);
     void on_drop_selected_table(wxCommandEvent& event);
+    void on_db_click_select(wxCommandEvent& event);
+    void on_select(wxCommandEvent& event);
     void on_ok(wxCommandEvent& event) override;
     void on_cancel(wxCommandEvent& event) override;
 };

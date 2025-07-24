@@ -1,6 +1,18 @@
 #include "database_table_manager.h"
 #include "cli/cli_util.h"
 
+DatabaseTableManager::DatabaseTableManager(Database* db)
+    : db_(db) 
+{
+    scan_existing_tables();
+    // Hack, set default table name to first one
+    if (!table_schemas_.empty()) {
+        current_table_name_ = table_schemas_.begin()->first;
+    } else {
+        throw DatabaseException("current table is empty");
+    }
+}
+
 void DatabaseTableManager::scan_existing_tables() {
     try {
         std::string sql = "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'";

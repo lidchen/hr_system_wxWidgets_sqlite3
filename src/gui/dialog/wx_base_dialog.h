@@ -5,7 +5,7 @@
 
 class wxBaseDialog : public wxDialog {
 public:
-    wxBaseDialog(wxWindow* parent);
+    // wxBaseDialog(wxWindow* parent);
 protected:
     wxBaseDialog(wxWindow *parent, const wxString& name);
     virtual void on_ok(wxCommandEvent& event);
