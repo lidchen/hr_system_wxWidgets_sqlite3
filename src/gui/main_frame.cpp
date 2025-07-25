@@ -30,8 +30,12 @@ MainFrame::MainFrame(const wxString& name)
     Bind(wxEVT_MENU, &MainFrame::on_tb_manager, this, open_tb_manager->GetId());
 
     // Open WelcomePanel at default
-    wxCreateTableDialog* test = new wxCreateTableDialog(this);
-    test->ShowModal();
+    // show_welcome_panel();
+    // TEST
+    // wxCreateTableDialog* test = new wxCreateTableDialog(this);
+    // test->ShowModal();
+    show_table_manager();
+    // show_database_manager();
 }
 void MainFrame::on_db_manager(wxCommandEvent& event) {
     wxDatabaseManagerDialog* db_manager_dialog = new wxDatabaseManagerDialog(this);
@@ -42,6 +46,16 @@ void MainFrame::on_tb_manager(wxCommandEvent& event) {
     wxTableManagerDialog* tb_manager_dialog = new wxTableManagerDialog(this);
     tb_manager_dialog->ShowModal();
     tb_manager_dialog->Destroy();
+}
+void MainFrame::show_database_manager() {
+    wxDatabaseManagerDialog* db_manager_dlg = new wxDatabaseManagerDialog(this);
+    db_manager_dlg->ShowModal();
+    db_manager_dlg->Destroy();
+}
+void MainFrame::show_table_manager() {
+    wxTableManagerDialog* tb_manager_dlg = new wxTableManagerDialog(this);
+    tb_manager_dlg->ShowModal();
+    tb_manager_dlg->Destroy();
 }
 void MainFrame::show_welcome_panel() {
     if (current_panel_) current_panel_->Destroy();

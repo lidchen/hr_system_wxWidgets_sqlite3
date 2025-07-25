@@ -8,8 +8,16 @@
 #include "core/database/database.h"
 
 namespace CLIUtil {
-    void print(const std::string& info);
-    void print(const wxString& info);
+    template<typename t>
+    void print(const t& value) {
+        std::cout << "======================\n";
+        std::cout << value << "\n";
+    }
+    template<typename t>
+    void print(const t& value, const std::string& label) {
+        std::cout << "[" + label + "]" << value << "\n";
+    }
+    void split();
     void print_table(const Database& db, const std::string& table_name);
     void print_query_result(const Database::QueryResult& result);
 }

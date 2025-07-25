@@ -29,7 +29,9 @@ add_executable(hm_system
     # GUI COMPONENTS
     ${SRC_DIR}/gui/gui_components/labeled_text_ctrl.cpp
     ${SRC_DIR}/gui/gui_components/listbox.cpp
-    ${SRC_DIR}/gui/gui_components/wx_editable_grid.cpp
+    ${SRC_DIR}/gui/gui_components/wx_editable_grid_panel.cpp
+    ${SRC_DIR}/gui/gui_components/wx_editable_grid_panel.cpp
+    ${SRC_DIR}/gui/gui_components/wx_table_schema_grid_panel.cpp
 
     # DIALOG
     ${SRC_DIR}/gui/dialog/wx_base_dialog.cpp

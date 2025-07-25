@@ -28,6 +28,7 @@ public:
     // Schema Operations
     
     // Column Operations
+    void update_column(int row, const ColumnDefinition &col_def);
     void add_column(const ColumnDefinition& col_def);
     void drop_column(const std::string& col_name);
 private:

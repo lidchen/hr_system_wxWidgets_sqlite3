@@ -15,6 +15,7 @@ public:
     std::string get_pk_name() const;
     int get_pk_index() const;
     int get_row_num();
+    void add_col(const ColumnDefinition& col_def);
     // bool validate(int col, std::string new_value);
 private:
     bool is_integer(const std::string& str);

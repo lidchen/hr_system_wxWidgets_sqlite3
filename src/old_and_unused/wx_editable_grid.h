@@ -10,7 +10,7 @@
 class wxEditableGrid : public wxGrid {
 public:
     wxEditableGrid(wxWindow* parent);
-    virtual void construct_grid();
+    virtual void construct_grid() = 0;
     void init_grid_style();
     void remove_existing_grid();
     int actual_rows_;

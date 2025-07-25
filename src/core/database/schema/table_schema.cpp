@@ -1,5 +1,6 @@
 #include "table_schema.h"
 #include "assert.h"
+#include "cli/cli_util.h"
 
 std::vector<std::string> TableSchema::get_col_names() const {
     std::vector<std::string> col_names;
@@ -40,6 +41,10 @@ int TableSchema::get_pk_index() const {
 
 int TableSchema::get_row_num() {
     return col_defs_.size();
+}
+
+void TableSchema::add_col(const ColumnDefinition& col_def) {
+    col_defs_.push_back(col_def);
 }
 
 // bool TableSchema::validate(int col_index, std::string new_value) {

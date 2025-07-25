@@ -1,4 +1,7 @@
 # NOW
+
+Use customiszed grid class
+
 [bug] cant scroll at view panel untill manually resize
 
 wxSchemaManager commit

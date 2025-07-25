@@ -102,12 +102,63 @@ std::vector<std::string> DatabaseTableManager::get_table_names() const {
     return table_names;
 }
 
+/* absolutely none sense
+void DatabaseTableManager::update_column(const ColumnDefinition& col_def) {
+    // SQLite does not support direct ALTER COLUMN, so you need to:
+    // 1. Create a new table with the updated column definition.
+    // 2. Copy data from the old table to the new table.
+    // 3. Drop the old table.
+    // 4. Rename the new table to the original name.
+
+    TableSchema old_schema = get_current_table_schema();
+    TableSchema new_schema = old_schema;
+
+    // Find and update the column definition
+    bool found = false;
+    for (auto& col : new_schema.col_defs_) {
+        if (col.name_ == col_def.name_) {
+            col = col_def;
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
+        throw DatabaseException("Column not found for update");
+    }
+
+    std::string temp_table_name = current_table_name_ + "_temp";
+    new_schema.table_name_ = temp_table_name;
+
+    // 1. Create new table
+    db_->execute_sql(new_schema.build_sql());
+
+    // 2. Copy data
+    std::string col_names;
+    for (size_t i = 0; i < old_schema.col_defs_.size(); ++i) {
+        col_names += old_schema.col_defs_[i].name_;
+        if (i != old_schema.col_defs_.size() - 1) col_names += ", ";
+    }
+    std::string copy_sql = "INSERT INTO " + temp_table_name + " (" + col_names + ") SELECT " + col_names + " FROM " + current_table_name_;
+    db_->execute_sql(copy_sql);
+
+    // 3. Drop old table
+    db_->execute_sql("DROP TABLE " + current_table_name_);
+
+    // 4. Rename new table
+    db_->execute_sql("ALTER TABLE " + temp_table_name + " RENAME TO " + current_table_name_);
+
+    // Update schema cache
+    table_schemas_[current_table_name_] = new_schema;
+}
+*/
 void DatabaseTableManager::add_column(const ColumnDefinition& col_def) {
     std::string sql = "ALTER TABLE ";
     sql += current_table_name_;
     sql += " ADD ";
     sql += col_def.col_def_to_string();
     db_->execute_sql(sql);
+    auto& current_table_schema = table_schemas_.at(current_table_name_);
+    current_table_schema.add_col(col_def);
 }
 
 void DatabaseTableManager::drop_column(const std::string& col_name) {
@@ -116,7 +167,7 @@ void DatabaseTableManager::drop_column(const std::string& col_name) {
     sql += " DROP COLUMN ";
     sql += col_name;
     db_->execute_sql(sql);
-    auto& current_table_schema = table_schemas_[current_table_name_];
+    auto& current_table_schema = table_schemas_.at(current_table_name_);
     for (auto it = current_table_schema.col_defs_.begin(); it != current_table_schema.col_defs_.end(); ++it) {
         if (it->name_ == col_name) {
             current_table_schema.col_defs_.erase(it);
