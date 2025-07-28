@@ -1,9 +1,9 @@
 #include "main_frame.h"
 #include "gui/welcome_panel.h"
-#include "gui/view_panel.h"
 #include "gui/dialog/wx_database_manager_dialog.h"
 #include "gui/dialog/wx_table_manager_dialog.h"
 #include "gui/dialog/wx_create_table_dialog.h"
+#include "gui/wx_database_editor_panel.h"
 
 MainFrame::MainFrame(const wxString& name) 
     : wxFrame(nullptr, wxID_ANY, name, wxDefaultPosition, wxSize(700, 500))
@@ -30,11 +30,11 @@ MainFrame::MainFrame(const wxString& name)
     Bind(wxEVT_MENU, &MainFrame::on_tb_manager, this, open_tb_manager->GetId());
 
     // Open WelcomePanel at default
-    // show_welcome_panel();
+    show_welcome_panel();
     // TEST
     // wxCreateTableDialog* test = new wxCreateTableDialog(this);
     // test->ShowModal();
-    show_table_manager();
+    // show_table_manager();
     // show_database_manager();
 }
 void MainFrame::on_db_manager(wxCommandEvent& event) {
@@ -64,8 +64,9 @@ void MainFrame::show_welcome_panel() {
 void MainFrame::show_view_panel() {
     if (current_panel_) current_panel_->Destroy();
     try {
-        current_panel_ = new ViewPanel(this);
-    } catch (DatabaseException e) {
+        current_panel_ = new wxDatabaseEditorPanel(this);
+        SetSize(wxSize(1024, 768));
+    } catch (DatabaseException& e) {
         wxLogError(e.what());
     }
 }

@@ -1,17 +1,5 @@
 # NOW
-
-Use customiszed grid class
-
 [bug] cant scroll at view panel untill manually resize
-
-wxSchemaManager commit
-
-wxTableManager create new table
-
-wxTableManagerDialog on_ok and on_cacel commit tb alter active, on_select set current db for tb_manager 
-    (This might crash program, or not work properly, since tb_manager is just local unique_ptr, dont share across dialogs, change its current database wont work or others)
-    
-wxViewPanel choice box for select table
 
 Global commit and rollback feature
 
@@ -24,15 +12,17 @@ Auto created Hidden Primary key when user don specify primary key
 
 Table_Manager Alter Table
 
-
-
 ## IMPORTANT
+sql injection & syntax error
+https://chatgpt.com/c/68834bb9-18a4-8011-8318-4a53987fabc1
+
 Check if database is open at Database::execute_sql
 
 add nullptr check at all possible
 restruct my code structure. My manager classes and inherit structure is a mess.
 
 # FUTURE
+stream-based sql stmt builder
 
 Rename Listbox::list_panel_ to list_box_
 

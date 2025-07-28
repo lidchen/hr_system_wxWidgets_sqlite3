@@ -15,6 +15,7 @@ public:
     wxButton* add_btn_;
     wxButton* delete_btn_;
 protected:
+    wxBoxSizer* h_sizer_;
     virtual void init_grid_cols() = 0;
     virtual void update_grid() = 0;
     virtual void append_new_row() = 0;

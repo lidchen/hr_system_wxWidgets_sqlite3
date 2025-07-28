@@ -23,6 +23,13 @@ public:
     DatabaseStmtBuilder& update(const std::string& table_name);
     DatabaseStmtBuilder& set(const std::string& col_name, const std::string& new_value);
 
+    // INSERT
+    DatabaseStmtBuilder& insert_into(const std::string& table_name);
+    DatabaseStmtBuilder& values(const std::vector<std::string> values);
+
+    // DELETE
+    DatabaseStmtBuilder& delete_from(const std::string& table_name);
+
     WhereBuilder where();
 
     DatabaseStmtBuilder& group_by(const std::string &grouped_columns);

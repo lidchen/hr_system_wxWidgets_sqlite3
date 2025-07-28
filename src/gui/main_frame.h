@@ -12,7 +12,6 @@ public:
     void show_view_panel();
     void show_database_manager();
     void show_table_manager();
-
 private:
     wxPanel* current_panel_ = nullptr;
     std::string default_project_path = "/Users/lid/Library/CloudStorage/OneDrive-Personal/Develop/work/hm_system/";

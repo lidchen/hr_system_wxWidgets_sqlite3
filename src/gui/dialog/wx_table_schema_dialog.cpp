@@ -14,7 +14,6 @@ wxTableSchemaDialog::wxTableSchemaDialog(wxWindow* parent)
     HorizontalPanel* current_table_panel = new HorizontalPanel(content_panel_);
     wxStaticText* st = new wxStaticText(current_table_panel, wxID_ANY, "Current Table:");
     table_selection_box_ = new wxChoice(current_table_panel, wxID_ANY);
-
     grid_panel_ = new wxTableSchemaGridPanel(this, tb_manager_.get());
 
     // table selection box

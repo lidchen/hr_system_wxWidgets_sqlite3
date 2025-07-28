@@ -5,33 +5,34 @@
 wxEditableGridPanel::wxEditableGridPanel(wxWindow* parent) 
     : wxPanel(parent, wxID_ANY)
 {
-    init_state();
     grid_panel_ = new wxPanel(this, wxID_ANY);
     btn_pannel_ = new wxPanel(this, wxID_ANY);
     grid_ = new wxGrid(grid_panel_, wxID_ANY);
     add_btn_ = new wxButton(btn_pannel_, wxID_ANY, "Add");
     delete_btn_ = new wxButton(btn_pannel_, wxID_ANY, "Delete");
 
-    wxBoxSizer* h_sizer = new wxBoxSizer(wxHORIZONTAL);
+    h_sizer_ = new wxBoxSizer(wxHORIZONTAL);
     wxBoxSizer* grid_sizer = new wxBoxSizer(wxHORIZONTAL);
     wxBoxSizer* btn_sizer = new wxBoxSizer(wxVERTICAL);
+
+    init_state();
 
     grid_sizer->Add(grid_, 1, wxEXPAND);
     grid_panel_->SetSizer(grid_sizer);
     btn_sizer->Add(add_btn_, 0, wxALIGN_CENTER_VERTICAL | wxALL, 10);
     btn_sizer->Add(delete_btn_, 0, wxALIGN_CENTER_VERTICAL | wxALL, 10);
     btn_pannel_->SetSizer(btn_sizer);
-    h_sizer->Add(grid_panel_, 1, wxEXPAND | wxALL, 10);
-    h_sizer->Add(btn_pannel_, 0, wxEXPAND | wxALL, 10);
+    h_sizer_->Add(grid_panel_, 1, wxEXPAND | wxALL, 10);
+    h_sizer_->Add(btn_pannel_, 0, wxEXPAND | wxALL, 10);
 
-    SetSizer(h_sizer);
+    SetSizer(h_sizer_);
 
     grid_->Bind(wxEVT_GRID_CELL_CHANGED, &wxEditableGridPanel::on_cell_change, this);
     add_btn_->Bind(wxEVT_BUTTON, &wxEditableGridPanel::on_add_or_commit_row, this);
     delete_btn_->Bind(wxEVT_BUTTON, &wxEditableGridPanel::on_delete_row, this);
 }
 void wxEditableGridPanel::init_state() {
-    actual_rows_ = 0;
+    actual_rows_ = grid_->GetNumberRows();
     new_row_index_ = -1;
     set_btn_status();
 }
@@ -68,6 +69,7 @@ void wxEditableGridPanel::on_cell_change(wxGridEvent& event) {
 }
 
 void wxEditableGridPanel::on_add_or_commit_row(wxCommandEvent& event) {
+    actual_rows_ = grid_->GetNumberRows();
     // CLIUtil::print<int>(actual_rows_, "actual_rows");
     // CLIUtil::print<int>(new_row_index_, "new_row_index");
     // CLIUtil::split();
@@ -78,7 +80,7 @@ void wxEditableGridPanel::on_add_or_commit_row(wxCommandEvent& event) {
 
         grid_->SetGridCursor(new_row_index_, 0);
         grid_->SetFocus();
-        grid_->SelectBlock(new_row_index_, 0, new_row_index_, 2);
+        grid_->SelectBlock(new_row_index_, 0, new_row_index_, grid_->GetNumberCols());
         set_btn_status();
     } else {
         // Commit row state
@@ -119,7 +121,8 @@ void wxEditableGridPanel::on_delete_row(wxCommandEvent& event) {
         return;
     try {
         commit_row_delete(row);
-        update_grid();
+        // update_grid()
+        grid_->DeleteRows(row);
         // If delete pending new line, init btn and new_row_index
         if (row == new_row_index_) {
             new_row_index_ = -1;

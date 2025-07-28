@@ -6,9 +6,9 @@
 
 #include "core/database/database_manager.h"
 #include "core/database/database_table_manager.h"
-#include "gui/dialog/wx_base_dialog.h"
 #include "gui/gui_components/listbox.h"
-#include "gui/gui_components/wx_table_schema_grid_panel.h"
+#include "gui/gui_components/grid_panel/wx_table_schema_grid_panel.h"
+#include "gui/dialog/wx_base_dialog.h"
 
 class wxTableSchemaDialog : public wxBaseDialog{
 private:
@@ -18,7 +18,7 @@ private:
 public:
     wxTableSchemaDialog(wxWindow* parent);
     ColumnDefinition get_col_def_from_row(int row_index);
-    void on_select_table(wxCommandEvent &event);
+    void on_select_table(wxCommandEvent& event);
     // void on_add(wxCommandEvent &event);
     // void on_grid_mouse_motion(wxMouseEvent &event);
     // void on_commit_new_line(wxCommandEvent &event);

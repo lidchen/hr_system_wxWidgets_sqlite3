@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 
 #include "database_stmt_builder.h"
 
@@ -39,6 +40,30 @@ DatabaseStmtBuilder& DatabaseStmtBuilder::update(const std::string& table_name) 
 
 DatabaseStmtBuilder& DatabaseStmtBuilder::set(const std::string& col_name, const std::string& new_value) {
     stmt_ += "SET " + col_name + " = '" + new_value + "' ";
+    return *this;
+}
+
+// INSERT
+DatabaseStmtBuilder& DatabaseStmtBuilder::insert_into(const std::string& table_name) {
+    stmt_ = "INSERT INTO ";
+    stmt_ += (table_name + " ");
+    return *this;
+}
+DatabaseStmtBuilder& DatabaseStmtBuilder::values(std::vector<std::string> values) {
+    std::ostringstream oss;
+    oss << "VALUES (";
+    for (size_t i = 0; i < values.size(); ++i) {
+        oss << "'" << values[i] << "'";
+        if (i != values.size() - 1) oss << ",";
+    }
+    oss << ")";
+    stmt_ += oss.str();
+    return *this;
+}
+
+// DELETE
+DatabaseStmtBuilder& DatabaseStmtBuilder::delete_from(const std::string& table_name) {
+    stmt_ = "DELETE FROM " + table_name + " ";
     return *this;
 }
 
