@@ -51,7 +51,7 @@ add_executable(hm_system
     # ${SRC_DIR}/gui/dialog/wx_import_dialog.cpp
 
     # GUI
-    ${SRC_DIR}/gui/wx_database_editor_panel.cpp
+    ${SRC_DIR}/gui/database_editor_panel.cpp
     ${SRC_DIR}/gui/welcome_panel.cpp
     ${SRC_DIR}/gui/main_frame.cpp
     ${SRC_DIR}/hr_system.cpp

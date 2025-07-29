@@ -113,9 +113,19 @@ void wxDatabaseManagerDialog::on_create_database(wxCommandEvent& event) {
     }
 }
 void wxDatabaseManagerDialog::on_delete_selected_database(wxCommandEvent& event) {
-    wxString selected_db_name = db_listbox_->get_selected_value();
-    db_manager_.delete_database(selected_db_name);
-    db_listbox_->remove_selection();
+    std::string selected_db_name = db_listbox_->get_selected_value();
+    int res = wxMessageBox(
+        wxString::Format("Are you sure you want to delete database '%s'?", selected_db_name),
+        "Confirm Delete", wxYES_NO | wxICON_QUESTION, this);
+    if (res != wxYES)
+        return;
+    try {
+        wxString selected_db_name = db_listbox_->get_selected_value();
+        db_manager_.delete_database(selected_db_name);
+        db_listbox_->remove_selection();
+    } catch (const DatabaseException& e) {
+        wxLogError("Can delete database: %s", e.what());
+    }
 }
 void wxDatabaseManagerDialog::on_db_click_select(wxCommandEvent& event) {
     if (set_selected_database()) {

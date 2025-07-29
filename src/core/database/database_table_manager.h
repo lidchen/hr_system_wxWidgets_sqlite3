@@ -5,8 +5,10 @@
 #include <vector>
 #include <unordered_map>
 
-#include "database.h"
+#include "wx/wx.h"
 #include "core/database/schema/table_schema.h"
+
+class Database;
 
 class DatabaseTableManager {
 public:
@@ -16,8 +18,7 @@ public:
 
     // Table Operations
     void create_table(const TableSchema& table_schema);
-    void create_table(const wxString& table_name);
-    void drop_table(const wxString& selected_tb_name);
+    void drop_table(const std::string& selected_tb_name);
     void rename_table(const std::string& old_name, const std::string& new_name);
 
     void set_current_table_name(const std::string& table_name);

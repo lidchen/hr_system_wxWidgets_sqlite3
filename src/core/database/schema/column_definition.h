@@ -57,6 +57,7 @@ struct ColumnDefinition {
     std::string type_to_string() const;
     ColumnType string_to_type(std::string type_str) const;
     bool is_pk() const;
+    bool is_empty() const;
 
     // bool validate(const std::string& value);
 private:

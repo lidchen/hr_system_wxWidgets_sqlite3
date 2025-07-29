@@ -3,7 +3,7 @@
 #include "gui/dialog/wx_database_manager_dialog.h"
 #include "gui/dialog/wx_table_manager_dialog.h"
 #include "gui/dialog/wx_create_table_dialog.h"
-#include "gui/wx_database_editor_panel.h"
+#include "gui/database_editor_panel.h"
 
 MainFrame::MainFrame(const wxString& name) 
     : wxFrame(nullptr, wxID_ANY, name, wxDefaultPosition, wxSize(700, 500))
@@ -47,10 +47,35 @@ void MainFrame::on_db_manager(wxCommandEvent& event) {
     db_manager_dialog->ShowModal();
     db_manager_dialog->Destroy();
 }
+
 void MainFrame::on_tb_manager(wxCommandEvent& event) {
+    DatabaseManager& db_manager = DatabaseManager::getInstance();
+    DatabaseTableManager* shared_tb_manager = db_manager.get_tb_manager();
+    if (!shared_tb_manager) {
+        throw(DatabaseException("No db selected"));
+    }
     wxTableManagerDialog* tb_manager_dialog = new wxTableManagerDialog(this);
-    tb_manager_dialog->ShowModal();
+    if (tb_manager_dialog->ShowModal() == wxID_OK) {
+        db_manager.notify_tb_changed();
+        refresh_current_panel();
+    }
     tb_manager_dialog->Destroy();
+}
+void MainFrame::show_db_editor_panel() {
+    DatabaseManager& db_manager = DatabaseManager::getInstance();
+    DatabaseTableManager* shared_tb_manager = db_manager.get_tb_manager();
+    if (current_panel_) current_panel_->Destroy();
+    try {
+        current_panel_ = new DatabaseEditorPanel(this);
+        db_manager.register_tb_observer([this]() {
+            if (auto* editor_panel = dynamic_cast<DatabaseEditorPanel*>(current_panel_)) {
+                editor_panel->refresh_tb_list();
+            }
+        });
+        SetSize(wxSize(1024, 768));
+    } catch (DatabaseException& e) {
+        wxLogError(e.what());
+    }
 }
 void MainFrame::show_database_manager() {
     wxDatabaseManagerDialog* db_manager_dlg = new wxDatabaseManagerDialog(this);
@@ -66,12 +91,8 @@ void MainFrame::show_welcome_panel() {
     if (current_panel_) current_panel_->Destroy();
     current_panel_ = new WelcomePanel(this);
 }
-void MainFrame::show_db_editor_panel() {
-    if (current_panel_) current_panel_->Destroy();
-    try {
-        current_panel_ = new wxDatabaseEditorPanel(this);
-        SetSize(wxSize(1024, 768));
-    } catch (DatabaseException& e) {
-        wxLogError(e.what());
+void MainFrame::refresh_current_panel() {
+    if (auto* editor_panel = dynamic_cast<DatabaseEditorPanel*>(current_panel_)) {
+        editor_panel->refresh_tb_list();
     }
 }

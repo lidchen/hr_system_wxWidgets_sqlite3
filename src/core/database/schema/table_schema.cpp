@@ -39,7 +39,7 @@ int TableSchema::get_pk_index() const {
     return -1;
 }
 
-int TableSchema::get_row_num() {
+int TableSchema::get_row_num() const {
     return col_defs_.size();
 }
 
@@ -47,6 +47,24 @@ void TableSchema::add_col(const ColumnDefinition& col_def) {
     col_defs_.push_back(col_def);
 }
 
+bool TableSchema::is_empty() const {
+    if (col_defs_.empty()) { return true; }
+    else {
+        for (auto col_def : col_defs_) {
+            if (col_def.is_empty()) { return true; }
+        }
+    }
+    return false;
+}
+
+bool TableSchema::validate_contains_pk() const {
+    for (const auto& col_def : col_defs_) {
+        if (col_def.constraints_ == ColumnConstraint::PRIMARY_KEY) {
+            return true;
+        }
+    }
+    return false;
+}
 // bool TableSchema::validate(int col_index, std::string new_value) {
 //     const auto& col_def = col_defs_[col_index];
 //     assert(!col_def.name_.empty() && !new_value.empty());

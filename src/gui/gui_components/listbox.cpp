@@ -1,4 +1,5 @@
 #include "listbox.h"
+#include <core/database/database_exception.h>
 
 Listbox::Listbox(wxWindow* parent) 
     : wxPanel(parent, wxID_ANY) 
@@ -37,12 +38,17 @@ void Listbox::remove_selection() {
 int Listbox::get_selection() {
     return list_panel_->GetSelection();
 }
-wxString Listbox::get_selected_value() {
+void Listbox::rename_selection(std::string new_value) {
+    int pos = list_panel_->GetSelection();
+    list_panel_->Delete(pos);
+    list_panel_->Insert(new_value, pos);
+}
+std::string Listbox::get_selected_value() {
     int sel = list_panel_->GetSelection();
-    if (sel != wxNOT_FOUND) {
-        return list_panel_->GetString(sel);
+    if (sel == wxNOT_FOUND) {
+        throw(DatabaseException("Please select a value"));
     }
-    return wxEmptyString;
+    return list_panel_->GetString(sel).ToStdString();
 }
 // void Listbox::on_dbl_click(wxCommandEvent& event) {
 //     int sel = list_panel_->GetSelection();

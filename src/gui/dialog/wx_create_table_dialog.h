@@ -5,20 +5,17 @@
 #include "wx/grid.h"
 #include "core/database/schema/column_definition.h"
 #include "gui/dialog/wx_base_dialog.h"
-#include "core/database/database_manager.h"
-#include "core/database/database_table_manager.h"
+#include "gui/gui_components/grid_panel/wx_table_schema_grid_panel.h"
+#include "gui/gui_components/labeled_text_ctrl.h"
 
 class wxCreateTableDialog : public wxBaseDialog {
 public:
     wxCreateTableDialog(wxWindow* parent);
 private:
-    const int default_row_num_ = 10; // Set default blank row num when open dialog
-    std::unique_ptr<DatabaseTableManager> tb_manager_;
-    wxGrid* grid_;
-    // void on_add(wxCommandEvent& event);
-    // void on_alter(wxCommandEvent& event);
-    ColumnDefinition get_col_def_from_row(int row_index);
-    void construct_grid();
+    TableSchema generate_schema();
+    LabeledTextCtrl* tb_name_panel_;
+    DatabaseTableManager* tb_manager_;
+    wxTableSchemaGridPanel* grid_panel_;
     void on_ok(wxCommandEvent& event) override;
     void on_cancel(wxCommandEvent& event) override;
 };

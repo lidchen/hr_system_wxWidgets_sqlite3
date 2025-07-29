@@ -15,6 +15,24 @@ void DatabaseManager::init() {
         current_database_ = database_container_[0].get();
     }
 }
+
+DatabaseTableManager* DatabaseManager::get_tb_manager() {
+    if (!main_tb_manager_ && current_database_) {
+        main_tb_manager_ = std::make_unique<DatabaseTableManager>(current_database_);
+    }
+    return main_tb_manager_.get();
+}
+
+void DatabaseManager::register_tb_observer(std::function<void()> callback) {
+    tb_observers_.push_back(callback); 
+}
+
+void DatabaseManager::notify_tb_changed() {
+    for (const auto& observer : tb_observers_) {
+        observer();
+    }
+}
+
 wxString DatabaseManager::get_database_dir() const {
     return dir_path_;
 }

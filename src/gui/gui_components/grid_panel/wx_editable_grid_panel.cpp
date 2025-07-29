@@ -122,7 +122,6 @@ void wxEditableGridPanel::on_delete_row(wxCommandEvent& event) {
         return;
     try {
         commit_row_delete(row);
-        // update_grid()
         grid_->DeleteRows(row);
 
         // Idiotic approach: update the new_row_index

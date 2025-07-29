@@ -26,31 +26,22 @@ void DatabaseTableManager::scan_existing_tables() {
         std::cerr << "Failded to scan tables" << e.what() << "\n";
     }
 }
-
-// FOR TEST
-void DatabaseTableManager::create_table(const wxString& table_name) {
-    // DatabaseStmtBuilder builder;
-    // builder.create_table(std::string(table_name.mb_str()));
-    // auto sql = builder.build();
-    std::string sql = "CREATE TABLE " + std::string(table_name.mb_str());
-    // sql += "(testcol1 TEXT, testcol2 TEXT)";
-    sql += "(TestCol1 TEXT PRIMARY KEY NOT NULL, TestCol2 INT NOT NULL, TestCol3 BOOL, TestCol4 TEXT UNIQUE NOT NULL, TestCol5 TEXT, TestCol6 TEXT)";
-    db_->execute_sql(sql);
-}
 void DatabaseTableManager::create_table(const TableSchema& schema) {
     // TODO: 
     // add a schema.is_valid() function
     // add table_exists(schema.name) function
+    if (!(schema.validate_contains_pk())) {
+        throw DatabaseException("Table Should Contain Primary Key");
+    }
     std::string sql = schema.build_sql();
     db_->execute_sql(sql);
     table_schemas_[schema.table_name_] = schema;
 }
-void DatabaseTableManager::drop_table(const wxString& selected_tb_name) {
-    std::string sql = "DROP TABLE " + std::string(selected_tb_name.mb_str());
+void DatabaseTableManager::drop_table(const std::string& selected_tb_name) {
+    std::string sql = "DROP TABLE " + selected_tb_name;
     db_->execute_sql(sql);
 
-    std::string tb_name_str = std::string(selected_tb_name.mb_str());
-    table_schemas_.erase(tb_name_str);
+    table_schemas_.erase(selected_tb_name);
 }
 void DatabaseTableManager::rename_table(const std::string& old_name, const std::string& new_name) {
     std::string sql = "ALTER TABLE " + old_name + " RENAME TO " + new_name;
@@ -100,9 +91,7 @@ TableSchema DatabaseTableManager::fetch_table_schema(const std::string table_nam
         db_->execute_sql(pragma_sql, [&schema](const std::vector<std::string>& col_names, const std::vector<std::string>& row_values) {
             ColumnDefinition col_def(row_values);
 
-            // Debug
             assert(!col_def.name_.empty());
-            //
 
             schema.col_defs_.push_back(col_def);
         });

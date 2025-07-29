@@ -2,8 +2,10 @@
 #define DATABASE_MANAGER_H_
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "database.h"
+#include "database_table_manager.h"
 
 #include "wx/wx.h"
 
@@ -17,10 +19,17 @@ public:
     DatabaseManager(const DatabaseManager&) = delete;
     DatabaseManager& operator=(const DatabaseManager&) = delete;
 
-    // set default database to avoid undefined behavior
     void init();
 
-    // TODO: This one should call wxselectfolder
+    // Table Management
+    DatabaseTableManager* get_tb_manager();
+    void register_tb_observer(std::function<void()> callback);
+    void notify_tb_changed();
+
+    // [FUTURE] For mutiple table management 
+    // void notify_tb_opened(const std::string& tb_name);
+    // void notify_tb_closed(const std::string& tb_name);
+
     wxString get_database_dir() const;
     wxString generate_formatted_db_name(const wxString &db_raw_input_name) const;
     wxString generate_full_db_name(const wxString &db_name) const;
@@ -45,6 +54,8 @@ public:
 private:
     // Store all databases
     std::vector<std::unique_ptr<Database>> database_container_;
+    std::unique_ptr<DatabaseTableManager> main_tb_manager_;
+    std::vector<std::function<void()>> tb_observers_;
     Database* current_database_ = nullptr;
     std::string dir_path_ = "/Users/lid/Library/CloudStorage/OneDrive-Personal/Develop/work/hm_system/resources/sql";
     DatabaseManager() = default;

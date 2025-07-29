@@ -117,6 +117,10 @@ bool ColumnDefinition::is_pk() const{
     return has_constraint(constraints_, ColumnConstraint::PRIMARY_KEY);
 }
 
+bool ColumnDefinition::is_empty() const {
+    return name_.empty();
+}
+
 // bool ColumnDefinition::validate(const std::string& value) {
 
 // }

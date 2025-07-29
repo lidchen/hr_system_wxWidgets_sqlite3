@@ -12,7 +12,7 @@
 
 class wxTableSchemaDialog : public wxBaseDialog{
 public:
-    wxTableSchemaDialog(wxWindow* parent, DatabaseTableManager* tb_manager);
+    wxTableSchemaDialog(wxWindow* parent);
     ColumnDefinition get_col_def_from_row(int row_index);
     ~wxTableSchemaDialog() = default;
 

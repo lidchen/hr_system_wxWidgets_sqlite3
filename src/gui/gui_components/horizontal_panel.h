@@ -10,15 +10,18 @@ public:
         {}
 
     template<typename... Args>
-    void add_children(Args... childern) 
+    void add_children(Args... children) 
     {
         static_assert((std::is_convertible_v<Args, wxWindow*> && ...), "All args should be wxWindow*");
-        sizer_ = new wxBoxSizer(wxHORIZONTAL);
-        (sizer_->Add(childern, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 10), ...); 
-        SetSizer(sizer_);
+        if (!sizer_) {
+            sizer_ = new wxBoxSizer(wxHORIZONTAL);
+            SetSizer(sizer_);
+        }
+        (sizer_->Add(children, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 10), ...);
+        Layout();
     }
 private:
-    wxBoxSizer* sizer_;
+    wxBoxSizer* sizer_ = nullptr;
 };
 
 #endif // HORIZONTAL_PANEL_H_

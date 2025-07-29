@@ -4,12 +4,12 @@
 #include "wx/grid.h"
 #include "gui/gui_components/horizontal_panel.h"
 
-wxTableSchemaDialog::wxTableSchemaDialog(wxWindow* parent, DatabaseTableManager* tb_manager) 
-    : tb_manager_(tb_manager)
-    , wxBaseDialog(parent, "Table Schema") 
+wxTableSchemaDialog::wxTableSchemaDialog(wxWindow* parent) 
+    : wxBaseDialog(parent, "Table Schema") 
 {
     // INIT STUFF
     DatabaseManager& db_manager = DatabaseManager::getInstance();
+    tb_manager_ = db_manager.get_tb_manager();
 
     // GUI
     HorizontalPanel* current_table_panel = new HorizontalPanel(content_panel_);

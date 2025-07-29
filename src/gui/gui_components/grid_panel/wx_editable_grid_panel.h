@@ -23,8 +23,6 @@ protected:
     virtual void commit_row_delete(int row) = 0;
     virtual void commit_cell(int row, int col, const std::string& new_value) = 0;
 
-    // I realize this feature conflict with my design
-    // const int min_rows_showed = 10;
     int actual_rows_;
     int new_row_index_;
     // For handle pk change

@@ -1,11 +1,9 @@
 # TODO
+[bug] select column at db_editor dont bind with current table
 
-schema_dlg alter table name
-schema_dlg delete confirm
-
-tb_manager_dlg new table bind to schema panel
 tb_manger_dlg default search column option & select all
 tb_manager_dlg advance search
+import_dlg
 
 auto manage col width(make sure use all space)
 
