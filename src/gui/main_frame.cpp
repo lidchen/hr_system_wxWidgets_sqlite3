@@ -15,22 +15,27 @@ MainFrame::MainFrame(const wxString& name)
     file = new wxMenu();
     import_from_csv = new wxMenu();
     database_manager = new wxMenu();
-
     wxMenuItem* open_db_mananger = new wxMenuItem(database_manager, wxID_ANY, wxT("Open Database Manager"));
     wxMenuItem* open_tb_manager = new wxMenuItem(database_manager, wxID_ANY, wxT("Open Table Manager"));
+    
     database_manager->Append(open_db_mananger);
     database_manager->Append(open_tb_manager);
 
-    file->AppendSubMenu(database_manager, wxT("Manage Database"));
+    // file->AppendSubMenu(database_manager, wxT("Manage Database"));
     file->AppendSubMenu(import_from_csv, wxT("Import From CSV"));
     menubar->Append(file, wxT("File"));
+    menubar->Append(database_manager, wxT("Manage Database"));
     SetMenuBar(menubar);
 
     Bind(wxEVT_MENU, &MainFrame::on_db_manager, this, open_db_mananger->GetId());
     Bind(wxEVT_MENU, &MainFrame::on_tb_manager, this, open_tb_manager->GetId());
 
     // Open WelcomePanel at default
-    show_welcome_panel();
+    // show_welcome_panel();
+
+    db_mananger.set_current_database("big_employee_table.sql");
+    show_db_editor_panel();
+
     // TEST
     // wxCreateTableDialog* test = new wxCreateTableDialog(this);
     // test->ShowModal();
@@ -61,7 +66,7 @@ void MainFrame::show_welcome_panel() {
     if (current_panel_) current_panel_->Destroy();
     current_panel_ = new WelcomePanel(this);
 }
-void MainFrame::show_view_panel() {
+void MainFrame::show_db_editor_panel() {
     if (current_panel_) current_panel_->Destroy();
     try {
         current_panel_ = new wxDatabaseEditorPanel(this);

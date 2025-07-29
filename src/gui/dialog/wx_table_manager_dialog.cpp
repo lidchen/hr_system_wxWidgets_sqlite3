@@ -32,6 +32,7 @@ wxTableManagerDialog::wxTableManagerDialog(wxWindow* parent)
 }
 
 void wxTableManagerDialog::list_tables() {
+    tb_listbox_->clear_list();
     auto tb_names = tb_manager_->get_table_names();
     for (const auto& tb_name : tb_names) {
         tb_listbox_->append_to_list(tb_name);
@@ -45,22 +46,24 @@ void wxTableManagerDialog::on_create_table(wxCommandEvent& event) {
         try {
             tb_manager_->create_table(table_name);
             tb_listbox_->append_to_list(table_name);
+            // tb_manager_->set_current_table_name(table_name.ToStdString());
+            // show_schema_dialog();
         } catch (const DatabaseException& e) {
             wxLogError("Failed to create table: %s", e.what());
         }
     }
 }
-
 void wxTableManagerDialog::on_drop_selected_table(wxCommandEvent& event) {
     // By default do restrict drop
     wxString selected_tb_name = tb_listbox_->get_selected_value();
     tb_manager_->drop_table(selected_tb_name);
     tb_listbox_->remove_selection();
 }
-
 void wxTableManagerDialog::show_schema_dialog() {
-    wxTableSchemaDialog* schema_dlg = new wxTableSchemaDialog(this);
-    schema_dlg->ShowModal();
+    wxTableSchemaDialog* schema_dlg = new wxTableSchemaDialog(this, tb_manager_.get());
+    if(schema_dlg->ShowModal() == wxID_OK) {
+        list_tables();
+    }
     schema_dlg->Destroy();
 }
 

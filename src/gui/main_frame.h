@@ -9,7 +9,7 @@ class MainFrame : public wxFrame
 public:
     MainFrame(const wxString &name);
     void show_welcome_panel();
-    void show_view_panel();
+    void show_db_editor_panel();
     void show_database_manager();
     void show_table_manager();
 private:

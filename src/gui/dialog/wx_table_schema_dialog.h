@@ -11,19 +11,18 @@
 #include "gui/dialog/wx_base_dialog.h"
 
 class wxTableSchemaDialog : public wxBaseDialog{
+public:
+    wxTableSchemaDialog(wxWindow* parent, DatabaseTableManager* tb_manager);
+    ColumnDefinition get_col_def_from_row(int row_index);
+    ~wxTableSchemaDialog() = default;
+
 private:
-    std::unique_ptr<DatabaseTableManager> tb_manager_;
+    void on_rename(wxCommandEvent& event);
+    void on_select_table(wxCommandEvent& event);
+
+    DatabaseTableManager* tb_manager_;
     wxChoice* table_selection_box_;
     wxTableSchemaGridPanel* grid_panel_;
-public:
-    wxTableSchemaDialog(wxWindow* parent);
-    ColumnDefinition get_col_def_from_row(int row_index);
-    void on_select_table(wxCommandEvent& event);
-    // void on_add(wxCommandEvent &event);
-    // void on_grid_mouse_motion(wxMouseEvent &event);
-    // void on_commit_new_line(wxCommandEvent &event);
-    // void on_drop_column(wxCommandEvent &event);
-    ~wxTableSchemaDialog() = default;
 };
 
 #endif // WX_TABLE_SCHEMA_DIALOG_H_

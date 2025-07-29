@@ -84,7 +84,7 @@ void WelcomePanel::on_db_manager(wxCommandEvent& event) {
         MainFrame* main_frame = wxDynamicCast(GetParent(), MainFrame);
         if (main_frame && db) {
             std::cout << "pass\n";
-            main_frame->show_view_panel();
+            main_frame->show_db_editor_panel();
         }
         // This line cause segmentation fault
         // db_manager_dialog->Destroy();

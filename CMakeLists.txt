@@ -37,6 +37,7 @@ add_executable(hm_system
     ${SRC_DIR}/gui/gui_components/grid_panel/wx_table_schema_grid_panel.cpp
     ${SRC_DIR}/gui/gui_components/grid_panel/wx_database_editor_grid_panel.cpp
     ${SRC_DIR}/gui/gui_components/wx_search_panel.cpp
+    ${SRC_DIR}/gui/gui_components/cb_select_popup.cpp
 
     # DIALOG
     ${SRC_DIR}/gui/dialog/wx_base_dialog.cpp

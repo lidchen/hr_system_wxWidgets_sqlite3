@@ -1,20 +1,28 @@
-# NOW
-[bug] cant scroll at view panel untill manually resize
+# TODO
+
+schema_dlg alter table name
+schema_dlg delete confirm
+
+tb_manager_dlg new table bind to schema panel
+tb_manger_dlg default search column option & select all
+tb_manager_dlg advance search
+
+auto manage col width(make sure use all space)
 
 Global commit and rollback feature
+    eg: Start a transaction when manager_dialog showup, press cancel -> rollback, press ok -> commit
 
 wxNotepad for multi table opening
 
 Preview Dialog (grab 50 lines of csv construct a temp table)
 wxImportDialog
 
-Auto created Hidden Primary key when user don specify primary key
-
-Table_Manager Alter Table
 
 ## IMPORTANT
 sql injection & syntax error
 https://chatgpt.com/c/68834bb9-18a4-8011-8318-4a53987fabc1
+
+Auto created Hidden Primary key when user don specify primary key
 
 Check if database is open at Database::execute_sql
 
@@ -22,11 +30,15 @@ add nullptr check at all possible
 restruct my code structure. My manager classes and inherit structure is a mess.
 
 # FUTURE
+
+database_table_manger all function pass std::string (not wxstring)
+
+[bug] cant scroll at view panel untill manually resize --fixed it in pretty idiotic way
+
 stream-based sql stmt builder
 
 Rename Listbox::list_panel_ to list_box_
 
-Start a transaction when manager_dialog showup, press cancel -> rollback, press ok -> commit
 DatabaseException split into error type and msg, for wxErrorLog (dont log error type for better user interface)
 
 Hashmap for table manager and database manager delete and select function

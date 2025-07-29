@@ -27,10 +27,11 @@ protected:
     // const int min_rows_showed = 10;
     int actual_rows_;
     int new_row_index_;
+    // For handle pk change
+    std::string prev_cell_value;
     void on_cell_change(wxGridEvent &event);
     void on_add_or_commit_row(wxCommandEvent& event);
     void on_delete_row(wxCommandEvent& event);
-
     // For convenience
     void remove_existing_grid_rows();
     void remove_existing_grid_cols();

@@ -48,6 +48,27 @@ void wxDatabaseEditorGridPanel::init_grid_cols() {
     }
 }
 
+void wxDatabaseEditorGridPanel::update_search(const std::string& sql) {
+    remove_existing_grid_rows();
+    // update grid using query result
+
+    auto row_callback = [this](const std::vector<std::string> col_names, const std::vector<std::string>& row) {
+        int new_row = grid_->GetNumberRows();
+        grid_->AppendRows(1);
+        for (int col = 0; col < col_num_; ++col) {
+            grid_->SetCellValue(new_row, col, row[col]);
+        }
+    };
+    try {
+        db_->execute_sql(sql, row_callback);
+    } catch (const DatabaseException& e) {
+        wxLogError("Failed update grid: %s", e.what());
+    }
+
+    grid_->AutoSizeColumns();
+    grid_->AutoSizeRows();
+}
+
 void wxDatabaseEditorGridPanel::update_grid() {
     remove_existing_grid_rows();
     // update grid using query result
@@ -83,7 +104,13 @@ std::string wxDatabaseEditorGridPanel::get_pk_value(int row) {
 
 void wxDatabaseEditorGridPanel::commit_cell(int row, int col, const std::string& new_value) {
     const std::string& col_name = col_names_[col];
-    const std::string& pk_value = get_pk_value(row);
+    std::string pk_value;
+    // Change pk, prev_cell_value is prepared for this situation
+    if (col == pk_index_) {
+        pk_value = prev_cell_value;
+    } else {
+        pk_value = get_pk_value(row);
+    }
     DatabaseStmtBuilder builder;
     std::string sql = builder.update(table_name_)
         .set(col_name, new_value)
@@ -106,8 +133,6 @@ void wxDatabaseEditorGridPanel::commit_row(int row) {
         .insert_into(table_name_)
         .values(values)
         .build();
-    std::cout << "wx_database_editor_grid_panel.cpp\n";
-    std::cout << sql << "\n";
     db_->execute_sql(sql);
 }
 

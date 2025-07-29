@@ -18,6 +18,7 @@ public:
     void create_table(const TableSchema& table_schema);
     void create_table(const wxString& table_name);
     void drop_table(const wxString& selected_tb_name);
+    void rename_table(const std::string& old_name, const std::string& new_name);
 
     void set_current_table_name(const std::string& table_name);
     std::vector<std::string> get_table_names() const;

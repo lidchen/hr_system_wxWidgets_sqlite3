@@ -13,6 +13,7 @@ wxDatabaseEditorPanel::wxDatabaseEditorPanel(wxWindow* parent)
     HorizontalPanel* tb_selection_panel = new HorizontalPanel(this);
     wxStaticText* st = new wxStaticText(tb_selection_panel, wxID_ANY, "Current Table:");
     tb_selection_box_ = new wxChoice(this, wxID_ANY);
+    search_panel_ = new wxSearchPanel(this, tb_manager_.get());
     grid_panel_ = new wxDatabaseEditorGridPanel(this, tb_manager_.get());
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -24,6 +25,7 @@ wxDatabaseEditorPanel::wxDatabaseEditorPanel(wxWindow* parent)
     tb_selection_panel->add_children(st, tb_selection_box_);
 
     main_sizer->Add(tb_selection_panel, 0, wxALL, 10);
+    main_sizer->Add(search_panel_, 0, wxEXPAND | wxALL, 10);
     main_sizer->Add(grid_panel_, 1, wxEXPAND | wxALL, 10);
 
     main_sizer->Fit(this);
@@ -33,6 +35,16 @@ wxDatabaseEditorPanel::wxDatabaseEditorPanel(wxWindow* parent)
 
     // BIND
     tb_selection_box_->Bind(wxEVT_CHOICE, &wxDatabaseEditorPanel::on_select_table, this);
+
+    // Bind the search event from the child panel to this panel's handler
+    search_panel_->searched_value_tc_->Bind(wxEVT_COMMAND_TEXT_ENTER, &wxDatabaseEditorPanel::on_search, this);
+    search_panel_->search_btn_->Bind(wxEVT_BUTTON, &wxDatabaseEditorPanel::on_search, this);
+}
+
+void wxDatabaseEditorPanel::on_search(wxCommandEvent& event) {
+    auto sql = search_panel_->generate_search_sql();
+    std::cout << sql << "\n";
+    grid_panel_->update_search(sql);
 }
 
 void wxDatabaseEditorPanel::on_select_table(wxCommandEvent& event) {
@@ -40,8 +52,4 @@ void wxDatabaseEditorPanel::on_select_table(wxCommandEvent& event) {
     tb_manager_->set_current_table_name(selected_table_name);
     grid_panel_->init_grid_cols();
     grid_panel_->update_grid();
-}
-
-wxSize wxDatabaseEditorPanel::get_size() {
-    return(grid_panel_->GetSize());
 }

@@ -14,7 +14,9 @@ class wxDatabaseEditorGridPanel : public wxEditableGridPanel {
 public:
     wxDatabaseEditorGridPanel(wxWindow* parent, DatabaseTableManager* tb_mananger);
     void init_grid_cols() override;
+    void update_search(const std::string &sql);
     void update_grid() override;
+
 private:
     void append_new_row() override;
     void commit_cell(int row, int col, const std::string& new_value) override;

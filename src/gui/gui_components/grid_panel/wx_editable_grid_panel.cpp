@@ -59,6 +59,7 @@ void wxEditableGridPanel::on_cell_change(wxGridEvent& event) {
     // so get the new value directly from the grid
     // , save old value for rollback
     wxString old_value = event.GetString();
+    prev_cell_value = old_value.ToStdString();
     wxString new_value = grid_->GetCellValue(row, col);
     try {
         commit_cell(row, col, new_value.ToStdString());
@@ -123,8 +124,12 @@ void wxEditableGridPanel::on_delete_row(wxCommandEvent& event) {
         commit_row_delete(row);
         // update_grid()
         grid_->DeleteRows(row);
+
+        // Idiotic approach: update the new_row_index
+        if (row > new_row_index_) new_row_index_++;
+        else if (row < new_row_index_) new_row_index_--;
+        else if (row == new_row_index_) {
         // If delete pending new line, init btn and new_row_index
-        if (row == new_row_index_) {
             new_row_index_ = -1;
             set_btn_status();
         }

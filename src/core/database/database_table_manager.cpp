@@ -52,6 +52,24 @@ void DatabaseTableManager::drop_table(const wxString& selected_tb_name) {
     std::string tb_name_str = std::string(selected_tb_name.mb_str());
     table_schemas_.erase(tb_name_str);
 }
+void DatabaseTableManager::rename_table(const std::string& old_name, const std::string& new_name) {
+    std::string sql = "ALTER TABLE " + old_name + " RENAME TO " + new_name;
+    db_->execute_sql(sql);
+
+    // Update table_schemas_ map
+    auto it = table_schemas_.find(old_name);
+    if (it != table_schemas_.end()) {
+        TableSchema schema = it->second;
+        schema.table_name_ = new_name;
+        table_schemas_.erase(it);
+        table_schemas_[new_name] = schema;
+    }
+
+    // Update current_table_name_
+    if (current_table_name_ == old_name) {
+        current_table_name_ = new_name;
+    }
+}
 void DatabaseTableManager::set_current_table_name(const std::string& table_name) {
     if (table_schemas_.find(table_name) != table_schemas_.end()) {
         current_table_name_ = table_name;
