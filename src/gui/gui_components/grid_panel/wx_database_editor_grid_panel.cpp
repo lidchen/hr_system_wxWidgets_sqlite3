@@ -35,13 +35,14 @@ void wxDatabaseEditorGridPanel::init_grid_cols() {
 
     grid_->AppendCols(col_num_);
 
-    grid_->SetRowLabelSize(10);
     grid_->SetColLabelSize(25);
+    // grid_->SetRowLabelSize(10);
+    grid_->HideRowLabels();
     grid_->SetRowLabelAlignment(wxALIGN_RIGHT, wxALIGN_CENTER);
     grid_->SetLabelFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 
     grid_->DisableDragRowSize();
-    grid_->DisableDragColSize();
+    // grid_->DisableDragColSize();
     // Set column labels
     for (int col = 0; col < col_num_; ++col) {
         grid_->SetColLabelValue(col, col_names_[col]);
@@ -74,11 +75,15 @@ void wxDatabaseEditorGridPanel::update_grid() {
     // update grid using query result
     std::string sql = "SELECT * FROM " + tb_manager_->get_current_table_name();
 
-    auto row_callback = [this](const std::vector<std::string> col_names, const std::vector<std::string>& row) {
+    auto row_callback = [this, count = 0](const std::vector<std::string> col_names, const std::vector<std::string>& row) mutable {
         int new_row = grid_->GetNumberRows();
         grid_->AppendRows(1);
         for (int col = 0; col < col_num_; ++col) {
             grid_->SetCellValue(new_row, col, row[col]);
+        }
+        // Yield to the event loop to keep UI responsive
+        if (++count % 500 == 0) {
+            wxSafeYield();
         }
     };
     try {

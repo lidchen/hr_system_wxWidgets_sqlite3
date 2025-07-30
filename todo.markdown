@@ -1,7 +1,4 @@
 # TODO
-[bug] select column at db_editor dont bind with current table
-
-tb_manger_dlg default search column option & select all
 tb_manager_dlg advance search
 import_dlg
 

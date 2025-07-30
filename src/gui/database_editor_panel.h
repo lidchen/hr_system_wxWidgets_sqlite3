@@ -10,7 +10,8 @@ public:
     DatabaseEditorPanel(wxWindow* parent);
     void refresh_tb_list();
     void on_select_table(wxCommandEvent& event);
-    void on_search(wxCommandEvent& event);
+    // void on_search(wxKeyEvent &event);
+    void on_search(wxCommandEvent &event);
 private:
     DatabaseTableManager* tb_manager_;
     wxChoice* tb_selection_box_;

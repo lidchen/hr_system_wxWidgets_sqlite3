@@ -9,8 +9,8 @@
 class wxSearchPanel : public wxPanel{
 public:
     wxSearchPanel(wxPanel* parent, DatabaseTableManager* tb_manager);
+    void refresh();
     std::string generate_search_sql();
-    // This is bad, really
     wxButton* search_btn_;
     wxTextCtrl* searched_value_tc_;
 private:
@@ -18,6 +18,7 @@ private:
     DatabaseTableManager* tb_manager_;
     wxNotebook* nb_;
     wxCheckBox* cb_fuzzy_;
+    wxCheckBox* cb_case_insensitive_;
     wxPanel* basic_search_;
     wxPanel* advance_search_;
     void on_toggle(wxCommandEvent& event);

@@ -7,29 +7,24 @@ WhereBuilder& WhereBuilder::column(const std::string& col_name) {
 }
 WhereBuilder& WhereBuilder::equals(const std::string& value) {
     if (!current_) throw DatabaseStmtBuilderException("column() must be called before equals()");
-    current_->op = "=";
     current_->value = value;
+    current_->fuzzy_match = false;
     conditions_.push_back(*current_);
     current_.reset();
     return *this;
 }
 WhereBuilder& WhereBuilder::like(const std::string& value) {
     if (!current_) throw DatabaseStmtBuilderException("column() must be called before like()");
-    current_->op = "LIKE";
-    current_->value = value + "%"; // prefix match
+    current_->fuzzy_match = true;
+    current_->value = value;
     conditions_.push_back(*current_);
     current_.reset();
     return *this;
 }
-WhereBuilder& WhereBuilder::ignore_case() {
-    if (conditions_.empty() && !current_)
+WhereBuilder& WhereBuilder::case_sensitive() {
+    if (conditions_.empty()) 
         throw DatabaseStmtBuilderException("No condition to apply ignore_case to");
-
-    if (current_) {
-        current_->ignore_case = true;
-    } else {
-        conditions_.back().ignore_case = true;
-    }
+    conditions_.back().case_sensitive = true;
     return *this;
 }
 std::string WhereBuilder::build_with_and(){
@@ -39,22 +34,31 @@ std::string WhereBuilder::build_with_and(){
         if (!first) stmt_ += " AND ";
         first = false;
 
-        std::string col = cond.ignore_case ? "LOWER(" + cond.column + ")" : cond.column;
-        std::string val = cond.ignore_case ? "LOWER('" + cond.value + "')" : "'" + cond.value + "'";
-        stmt_ += col + " " + cond.op + " " + val;
+        stmt_ += generate_where_condition(cond);
     }
     return stmt_;
 }
+
 std::string WhereBuilder::build_with_or() {
     stmt_ += "WHERE ";
     bool first = true;
     for (const auto& cond : conditions_) {
         if (!first) stmt_ += " OR ";
         first = false;
-
-        std::string col = cond.ignore_case ? "LOWER(" + cond.column + ")" : cond.column;
-        std::string val = cond.ignore_case ? "LOWER('" + cond.value + "')" : "'" + cond.value + "'";
-        stmt_ += col + " " + cond.op + " " + val;
+        stmt_ += generate_where_condition(cond);
     }
     return stmt_;
+}
+std::string WhereBuilder::generate_where_condition(const Condition& cond) {
+    std::string col = cond.column;
+    std::string op;
+    std::string value = cond.value;
+    if (cond.case_sensitive) {
+        op = "GLOB";
+        if (cond.fuzzy_match) value += "*";
+    } else {
+        op = "LIKE";
+        if (cond.fuzzy_match) value += "%";
+    }
+    return col + " " + op + " '" + value + "'";  
 }

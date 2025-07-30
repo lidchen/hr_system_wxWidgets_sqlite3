@@ -8,7 +8,6 @@ DatabaseEditorPanel::DatabaseEditorPanel(wxWindow* parent)
     // INIT
     DatabaseManager& db_manager = DatabaseManager::getInstance();
     tb_manager_ = db_manager.get_tb_manager();
-    // tb_manager_ = std::make_unique<DatabaseTableManager>(db_manger.get_current_database());
 
     // GUI
     HorizontalPanel* tb_selection_panel = new HorizontalPanel(this);
@@ -33,9 +32,7 @@ DatabaseEditorPanel::DatabaseEditorPanel(wxWindow* parent)
 
     // BIND
     tb_selection_box_->Bind(wxEVT_CHOICE, &DatabaseEditorPanel::on_select_table, this);
-
-    // Bind the search event from the child panel to this panel's handler
-    search_panel_->searched_value_tc_->Bind(wxEVT_COMMAND_TEXT_ENTER, &DatabaseEditorPanel::on_search, this);
+    search_panel_->searched_value_tc_->Bind(wxEVT_TEXT_ENTER, &DatabaseEditorPanel::on_search, this);
     search_panel_->search_btn_->Bind(wxEVT_BUTTON, &DatabaseEditorPanel::on_search, this);
 }
 
@@ -48,14 +45,15 @@ void DatabaseEditorPanel::refresh_tb_list() {
     }
 }
 
-void DatabaseEditorPanel::on_search(wxCommandEvent& event) {
-    auto sql = search_panel_->generate_search_sql();
-    grid_panel_->update_search(sql);
-}
-
 void DatabaseEditorPanel::on_select_table(wxCommandEvent& event) {
     std::string selected_table_name = tb_selection_box_->GetStringSelection().ToStdString();
     tb_manager_->set_current_table_name(selected_table_name);
+    search_panel_->refresh();
     grid_panel_->init_grid_cols();
     grid_panel_->update_grid();
+}
+
+void DatabaseEditorPanel::on_search(wxCommandEvent& event) {
+    auto sql = search_panel_->generate_search_sql();
+    grid_panel_->update_search(sql);
 }

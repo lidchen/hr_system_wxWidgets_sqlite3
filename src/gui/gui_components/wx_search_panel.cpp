@@ -14,7 +14,7 @@ wxSearchPanel::wxSearchPanel(wxPanel* parent, DatabaseTableManager* tb_manager)
     wxBoxSizer* basic_sizer = new wxBoxSizer(wxVERTICAL);
 
     HorizontalPanel* search_bar = new HorizontalPanel(basic_search_);
-    searched_value_tc_ = new wxTextCtrl(search_bar, wxID_ANY, "");
+    searched_value_tc_ = new wxTextCtrl(search_bar, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
     search_btn_ = new wxButton(search_bar, wxID_ANY, "Search");
     search_bar->add_children(searched_value_tc_, search_btn_);
 
@@ -22,19 +22,23 @@ wxSearchPanel::wxSearchPanel(wxPanel* parent, DatabaseTableManager* tb_manager)
     wxBoxSizer* toggle_panel_sizer = new wxBoxSizer(wxHORIZONTAL);
     wxButton* col_select_btn = new wxButton(toggle_panel, wxID_ANY, "Select Column");
 
-    auto col_names = tb_manager_->get_current_table_schema().get_col_names();
-    col_select_popup_ = new CbSelectPopup(wxGetTopLevelParent(toggle_panel), col_names);
+    col_select_popup_ = new CbSelectPopup(wxGetTopLevelParent(toggle_panel));
 
     cb_fuzzy_ = new wxCheckBox
-        (toggle_panel, wxID_ANY, "fuzzy_search", wxDefaultPosition, wxDefaultSize);
-    cb_fuzzy_->SetValue(true);
+        (toggle_panel, wxID_ANY, "Fuzzy Search", wxDefaultPosition, wxDefaultSize);
+    cb_case_insensitive_ = new wxCheckBox
+        (toggle_panel, wxID_ANY, "Case Insensitive", wxDefaultPosition, wxDefaultSize);
+
     toggle_panel_sizer->Add(cb_fuzzy_);
+    toggle_panel_sizer->Add(cb_case_insensitive_);
     toggle_panel_sizer->Add(col_select_btn);
     toggle_panel->SetSizer(toggle_panel_sizer);
-
+    
     basic_sizer->Add(search_bar, 1, wxALL, 10);
     basic_sizer->Add(toggle_panel);
     basic_search_->SetSizer(basic_sizer);
+
+    refresh();
 
     // ADVANCE SEARCH
     advance_search_ = new wxPanel(nb_, wxID_ANY, wxPoint(-1, -1), wxDefaultSize);
@@ -69,12 +73,23 @@ wxSearchPanel::wxSearchPanel(wxPanel* parent, DatabaseTableManager* tb_manager)
     });
 }
 
+void wxSearchPanel::refresh() {
+    auto col_names = tb_manager_->get_current_table_schema().get_col_names();
+    col_select_popup_->update_checkboxes(col_names);
+    // DEFAULT COL SELECTION: SELECT ALL
+    col_select_popup_->select_all();
+
+    cb_fuzzy_->SetValue(true);
+    cb_case_insensitive_->SetValue(true);
+}
+
 std::string wxSearchPanel::generate_search_sql() {
     // BASIC SEARCH
     if (nb_->GetCurrentPage() == basic_search_) {
         auto selection_info = col_select_popup_->get_selection();
         std::string search_value = searched_value_tc_->GetValue().ToStdString();
         bool fuzzy_on = cb_fuzzy_->GetValue();
+        bool case_insensitive = cb_case_insensitive_->GetValue();
 
         DatabaseStmtBuilder builder;
         auto where_builder = builder.select("*")
@@ -85,14 +100,20 @@ std::string wxSearchPanel::generate_search_sql() {
         for (size_t i = 0; i < col_names.size(); ++i) {
             if (selection_info[i]) {
                 where_builder.column(col_names[i]);
+                // FUZZY SEARCH
                 if (fuzzy_on) {
                     where_builder.like(search_value);
                 } else {
                     where_builder.equals(search_value);
                 }
+                // CASE SENSITIVE
+                if (!case_insensitive) {
+                    where_builder.case_sensitive();
+                } 
             }
         }
         auto sql = where_builder.build_with_or();
+        std::cout << sql << "\n";
         return sql;
     }
     return "";
