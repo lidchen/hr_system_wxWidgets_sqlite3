@@ -3,7 +3,7 @@
 
 #include "wx/wx.h"
 #include "gui/gui_components/grid_panel/wx_database_editor_grid_panel.h"
-#include "gui/gui_components/wx_search_panel.h"
+#include "gui/gui_components/search_panel/wx_search_panel.h"
 
 class DatabaseEditorPanel : public wxPanel {
 public:

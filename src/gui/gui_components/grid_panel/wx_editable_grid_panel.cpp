@@ -78,10 +78,10 @@ void wxEditableGridPanel::on_add_or_commit_row(wxCommandEvent& event) {
         // actual_rows_ should be changed inside append_new_row();
         append_new_row();
         new_row_index_ = actual_rows_ - 1;
-
         grid_->SetGridCursor(new_row_index_, 0);
         grid_->SetFocus();
         grid_->SelectBlock(new_row_index_, 0, new_row_index_, grid_->GetNumberCols());
+        grid_->MakeCellVisible(new_row_index_, 0);
         set_btn_status();
     } else {
         // Commit row state

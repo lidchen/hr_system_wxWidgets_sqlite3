@@ -1,5 +1,5 @@
 # TODO
-tb_manager_dlg advance search
+search order config
 import_dlg
 
 auto manage col width(make sure use all space)

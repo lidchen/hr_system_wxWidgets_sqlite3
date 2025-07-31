@@ -2,6 +2,8 @@
 #include "core/database/database_manager.h"
 #include "gui/gui_components/horizontal_panel.h"
 
+wxDEFINE_EVENT(EVT_SEARCH_QUERY, wxCommandEvent);
+
 DatabaseEditorPanel::DatabaseEditorPanel(wxWindow* parent)
     : wxPanel(parent, wxID_ANY)
 {
@@ -15,7 +17,7 @@ DatabaseEditorPanel::DatabaseEditorPanel(wxWindow* parent)
     tb_selection_box_ = new wxChoice(tb_selection_panel, wxID_ANY);
     tb_selection_panel->add_children(st, tb_selection_box_);
 
-    search_panel_ = new wxSearchPanel(this, tb_manager_);
+    search_panel_ = new wxSearchPanel(this);
     grid_panel_ = new wxDatabaseEditorGridPanel(this, tb_manager_);
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -32,8 +34,7 @@ DatabaseEditorPanel::DatabaseEditorPanel(wxWindow* parent)
 
     // BIND
     tb_selection_box_->Bind(wxEVT_CHOICE, &DatabaseEditorPanel::on_select_table, this);
-    search_panel_->searched_value_tc_->Bind(wxEVT_TEXT_ENTER, &DatabaseEditorPanel::on_search, this);
-    search_panel_->search_btn_->Bind(wxEVT_BUTTON, &DatabaseEditorPanel::on_search, this);
+    Bind(EVT_SEARCH_QUERY, &DatabaseEditorPanel::on_search, this);
 }
 
 void DatabaseEditorPanel::refresh_tb_list() {
@@ -54,6 +55,7 @@ void DatabaseEditorPanel::on_select_table(wxCommandEvent& event) {
 }
 
 void DatabaseEditorPanel::on_search(wxCommandEvent& event) {
-    auto sql = search_panel_->generate_search_sql();
+    std::cout << "TRIGGERED\n";
+    auto sql = search_panel_->build_search_sql();
     grid_panel_->update_search(sql);
 }

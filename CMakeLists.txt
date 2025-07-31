@@ -33,11 +33,14 @@ add_executable(hm_system
     # GUI COMPONENTS
     ${SRC_DIR}/gui/gui_components/labeled_text_ctrl.cpp
     ${SRC_DIR}/gui/gui_components/listbox.cpp
+    ${SRC_DIR}/gui/gui_components/cb_select_popup.cpp
+    ${SRC_DIR}/gui/gui_components/smart_grid.cpp
     ${SRC_DIR}/gui/gui_components/grid_panel/wx_editable_grid_panel.cpp
     ${SRC_DIR}/gui/gui_components/grid_panel/wx_table_schema_grid_panel.cpp
     ${SRC_DIR}/gui/gui_components/grid_panel/wx_database_editor_grid_panel.cpp
-    ${SRC_DIR}/gui/gui_components/wx_search_panel.cpp
-    ${SRC_DIR}/gui/gui_components/cb_select_popup.cpp
+    ${SRC_DIR}/gui/gui_components/search_panel/basic_search_panel.cpp
+    ${SRC_DIR}/gui/gui_components/search_panel/advance_search_panel.cpp
+    ${SRC_DIR}/gui/gui_components/search_panel/wx_search_panel.cpp
 
     # DIALOG
     ${SRC_DIR}/gui/dialog/wx_base_dialog.cpp
