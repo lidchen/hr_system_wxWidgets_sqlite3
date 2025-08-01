@@ -1,13 +1,14 @@
 #include "wx_editable_grid_panel.h"
 #include <core/database/database_exception.h>
 #include "cli/cli_util.h"
+#include "gui/event/evt_cell_commit.h"
 
 wxEditableGridPanel::wxEditableGridPanel(wxWindow* parent) 
     : wxPanel(parent, wxID_ANY)
 {
     grid_panel_ = new wxPanel(this, wxID_ANY);
     btn_pannel_ = new wxPanel(this, wxID_ANY);
-    grid_ = new wxGrid(grid_panel_, wxID_ANY);
+    grid_ = new SmartGrid(grid_panel_);
     add_btn_ = new wxButton(btn_pannel_, wxID_ANY, "Add");
     delete_btn_ = new wxButton(btn_pannel_, wxID_ANY, "Delete");
 
@@ -27,7 +28,7 @@ wxEditableGridPanel::wxEditableGridPanel(wxWindow* parent)
 
     SetSizer(h_sizer_);
 
-    grid_->Bind(wxEVT_GRID_CELL_CHANGED, &wxEditableGridPanel::on_cell_change, this);
+    grid_panel_->Bind(EVT_CELL_COMMIT, &wxEditableGridPanel::on_cell_change, this);
     add_btn_->Bind(wxEVT_BUTTON, &wxEditableGridPanel::on_add_or_commit_row, this);
     delete_btn_->Bind(wxEVT_BUTTON, &wxEditableGridPanel::on_delete_row, this);
 }
@@ -47,25 +48,23 @@ void wxEditableGridPanel::set_btn_status() {
         }
     }
 }
-void wxEditableGridPanel::on_cell_change(wxGridEvent& event) {
-    int row = event.GetRow();
+
+void wxEditableGridPanel::on_cell_change(EvtCellCommit& event) {
+    int row = event.get_row();
+
     // if is editing new line, ignore cell commit
     if (row == new_row_index_) {
         return;
     }
 
-    int col = event.GetCol();
-    // event.GetString() get the old value before modified
-    // so get the new value directly from the grid
-    // , save old value for rollback
-    wxString old_value = event.GetString();
-    prev_cell_value = old_value.ToStdString();
-    wxString new_value = grid_->GetCellValue(row, col);
+    int col = event.get_col();
+    std::string prev_cell_value = event.get_prev_value();
+    std::string new_value = event.get_value();
     try {
-        commit_cell(row, col, new_value.ToStdString());
+        commit_cell(row, col, new_value, prev_cell_value);
     } catch (const DatabaseException& e) {
         wxMessageBox("Error updating database: " + wxString(e.what()));
-        grid_->SetCellValue(row, col, old_value);
+        grid_->SetCellValue(row, col, prev_cell_value);
     }
 }
 

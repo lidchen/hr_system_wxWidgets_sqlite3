@@ -3,17 +3,18 @@
 
 #include <string>
 #include <vector>
+#include "wx/wx.h"
 
-enum class ColumnType {
+enum class ColumnType
+{
     TEXT,
     INTEGER,
     FLOAT,
     BOOLEAN,
-    DATE,
-    DATETIME,
-    YEAR,
-    MONEY
-    // dont know if I could do this
+    DATE
+    // TODO
+    // YEAR,
+    // MONEY
     // ENUM_LIKE
 };
 
@@ -49,6 +50,23 @@ struct ColumnDefinition {
     // I just remove this two in ColumnConstraint
     // Maybe fix this later (T^T)
 
+    static wxArrayString get_col_types() {
+        wxArrayString arr;
+        arr.Add("TEXT");
+        arr.Add("INTEGER");
+        arr.Add("FLOAT");
+        arr.Add("BOOLEAN");
+        arr.Add("DATE");
+        return arr;
+    }
+    static wxArrayString get_col_constraints() {
+        wxArrayString arr;
+        arr.Add("NONE");
+        arr.Add("PRIMARY KEY");
+        arr.Add("NOT NULL");
+        return arr;
+    }
+
     // get row_values in callback function using pragma_sql
     void generate_from_pragma_sql(const std::vector<std::string>& row_values);
     std::string col_def_to_string() const;
@@ -61,11 +79,6 @@ struct ColumnDefinition {
 
     // bool validate(const std::string& value);
 private:
-    // bool is_integer(const std::string& str);
-    // bool is_float(const std::string& str);
-    // bool is_bool(const std::string& str);
-    // bool is_boolean(const std::string& str);
-    // bool is_date(const std::string& str);
 };
 
 #endif // COLUMN_DEFINITION_H_

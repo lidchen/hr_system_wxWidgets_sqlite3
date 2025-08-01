@@ -1,4 +1,5 @@
 #include "column_definition.h"
+#include "iostream"
 
 ColumnDefinition::ColumnDefinition(const std::string& name, const std::string& type, const std::string& constraints) {
     name_ = name;
@@ -88,28 +89,18 @@ std::string ColumnDefinition::type_to_string() const {
         case ColumnType::FLOAT: return "REAL";
         case ColumnType::BOOLEAN: return "BOOLEAN";
         case ColumnType::DATE: return "DATE";
-        case ColumnType::DATETIME: return "DATETIME";
-        case ColumnType::YEAR: return "YEAR";
-        case ColumnType::MONEY: return "MONEY";
         default: return "TEXT";
     }
 }
 
 ColumnType ColumnDefinition::string_to_type(std::string type_str) const {
-    // if (type_str.find("TEXT") != std::string::npos) { return ColumnType::TEXT; }
-    // if (type_str.find("INTEGER") != std::string::npos) { return ColumnType::INTEGER; }
-    // if (type_str.find("REAL") != std::string::npos) { return ColumnType::FLOAT; }
-    // if (type_str.find("BOOLEAN") != std::string::npos) { return ColumnType::BOOLEAN; }
-    // if (type_str.find("DATE") != std::string::npos) { return ColumnType::DATE; }
-    // if (type_str.find("DATETIME") != std::string::npos) { return ColumnType::DATETIME; }
     if (type_str == "TEXT") { return ColumnType::TEXT; }
     if (type_str == "INTEGER") { return ColumnType::INTEGER; }
-    if (type_str == "FLOAT") { return ColumnType::FLOAT; }
+    if (type_str == "REAL") { return ColumnType::FLOAT; }
     if (type_str == "BOOLEAN") { return ColumnType::BOOLEAN; }
     if (type_str == "DATE") { return ColumnType::DATE; }
-    if (type_str == "DATETIME") { return ColumnType::DATETIME; }
-    if (type_str == "YEAR") { return ColumnType::YEAR; }
-    if (type_str == "MONEY") { return ColumnType::MONEY; }
+    // Test
+    std::cerr << "Uncatched type at ColumnDefinition::string_to_type\n";
     return ColumnType::TEXT;
 }
 

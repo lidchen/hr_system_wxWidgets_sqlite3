@@ -2,10 +2,9 @@
 #define BASE_SEARCH_PANEL_H_
 
 #include "wx/wx.h"
+#include "gui/event/custom_event.h"
 #include "core/database/database_manager.h"
 #include "core/database/database_table_manager.h"
-
-wxDECLARE_EVENT(EVT_SEARCH_QUERY, wxCommandEvent);
 
 class BaseSearchPanel : public wxPanel {
 public:

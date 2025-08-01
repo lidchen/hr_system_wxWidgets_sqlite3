@@ -24,6 +24,12 @@ wxCreateTableDialog::wxCreateTableDialog(wxWindow* parent)
 }
 TableSchema wxCreateTableDialog::generate_schema() {
     std::string tb_name = tb_name_panel_->get_value().ToStdString();
+    // Trim whitespace from table name
+    tb_name.erase(0, tb_name.find_first_not_of(" \t\n\r\f\v"));
+    tb_name.erase(tb_name.find_last_not_of(" \t\n\r\f\v") + 1);
+    if(tb_name.empty()) {
+        throw DatabaseException("Table name cannot be empty or only spaces.");
+    }
     auto col_defs = grid_panel_->generate_col_defs();
     TableSchema schema(tb_name, col_defs);
     if(schema.is_empty()) {

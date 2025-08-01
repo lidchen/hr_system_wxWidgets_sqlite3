@@ -117,11 +117,11 @@ void Database::rollback_transaction() {
     execute_sql("ROLLBACK");
 }
 void Database::debug_state() const {
-    std::cout << "Database state check:" << std::endl;
-    std::cout << "  db_ pointer: " << (void*)db_ << std::endl;
+    std::cerr << "Database state check:" << std::endl;
+    std::cerr << "  db_ pointer: " << (void*)db_ << std::endl;
     if (db_) {
-        std::cout << "  Last error: " << sqlite3_errmsg(db_) << std::endl;
-        std::cout << "  Extended error: " << sqlite3_extended_errcode(db_) << std::endl;
+        std::cerr << "  Last error: " << sqlite3_errmsg(db_) << std::endl;
+        std::cerr << "  Extended error: " << sqlite3_extended_errcode(db_) << std::endl;
     }
 }
 
@@ -150,6 +150,7 @@ Database::QueryResult Database::fetch_all(const std::string& sql) const {
 
 void Database::execute_sql(const std::string& sql) const {
 // debug_state();
+// std::cerr << sql << "\n";
     char* err_msg = nullptr;
     int rc = sqlite3_exec(db_, sql.c_str(), nullptr, nullptr, &err_msg);
     if (rc != SQLITE_OK) {

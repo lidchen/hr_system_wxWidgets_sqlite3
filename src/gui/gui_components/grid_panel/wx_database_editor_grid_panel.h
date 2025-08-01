@@ -14,12 +14,11 @@ class wxDatabaseEditorGridPanel : public wxEditableGridPanel {
 public:
     wxDatabaseEditorGridPanel(wxWindow* parent, DatabaseTableManager* tb_mananger);
     void init_grid_cols() override;
-    void update_search(const std::string &sql);
     void update_grid() override;
-
+    void update_grid_with_sql(const std::string& sql);
 private:
     void append_new_row() override;
-    void commit_cell(int row, int col, const std::string& new_value) override;
+    void commit_cell(int row, int col, const std::string& new_value, const std::string& prev_value) override;
     void commit_row(int row) override;
     void commit_row_delete(int row) override;
     std::string get_pk_value(int row);
@@ -28,6 +27,7 @@ private:
     DatabaseTableManager* tb_manager_;
     void set_table();
     void on_select_table(wxCommandEvent& event);
+
     // Helper local variable
     // For preformance, I dont want to get this every update
     TableSchema schema_;

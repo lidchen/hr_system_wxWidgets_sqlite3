@@ -7,16 +7,8 @@ wxTableSchemaGridPanel::wxTableSchemaGridPanel(wxWindow* parent
     , mode_(mode)
     , wxEditableGridPanel(parent)
 {
-    type_choices.Add("TEXT");
-    type_choices.Add("INTEGER");
-    type_choices.Add("FLOAT");
-    type_choices.Add("BOOLEAN");
-    type_choices.Add("DATE");
-    type_choices.Add("DATETIME");
-    type_choices.Add("YEAR");
-    constraint_choices.Add("NONE");
-    constraint_choices.Add("PRIMARY KEY");
-    constraint_choices.Add("NOT NULL");
+    type_choices = ColumnDefinition::get_col_types();
+    constraint_choices = ColumnDefinition::get_col_constraints();
 
     init_grid_cols();
     update_grid();
@@ -27,7 +19,7 @@ void wxTableSchemaGridPanel::init_grid_cols() {
     init_state();
     remove_existing_grid_cols();
     remove_existing_grid_rows();
-    grid_->CreateGrid(0, 3);
+    grid_->CreateGrid(0, 0);
     int row;
     if (is_create_mode()) {
         row = 0;
@@ -89,7 +81,7 @@ void wxTableSchemaGridPanel::append_new_row() {
     grid_->SetCellEditor(last_row_index, 1, new wxGridCellChoiceEditor(type_choices));
     grid_->SetCellEditor(last_row_index, 2, new wxGridCellChoiceEditor(constraint_choices));
 }
-void wxTableSchemaGridPanel::commit_cell(int row, int col, const std::string& new_value) {
+void wxTableSchemaGridPanel::commit_cell(int row, int col, const std::string& new_value, const std::string& prev_value) {
     // NO, YOU CANT CHANGE COLUMN IN SQLITE
 }
 void wxTableSchemaGridPanel::commit_row(int row) {

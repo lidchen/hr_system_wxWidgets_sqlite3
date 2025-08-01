@@ -11,7 +11,7 @@ std::vector<std::string> TableSchema::get_col_names() const {
 }
 
 std::string TableSchema::build_sql() const {
-    std::string sql = "CREATE TABLE " + table_name_ + " (";
+    std::string sql = "CREATE TABLE '" + table_name_ + "' (";
     for (size_t i = 0; i < col_defs_.size(); ++i) {
         sql += " " + col_defs_[i].col_def_to_string();
         if (i < col_defs_.size() - 1) sql += ",";

@@ -53,6 +53,10 @@ add_executable(hm_system
     # TODO
     # ${SRC_DIR}/gui/dialog/wx_import_dialog.cpp
 
+    # EVENT
+    ${SRC_DIR}/gui/event/custom_event.cpp
+    ${SRC_DIR}/gui/event/evt_cell_commit.cpp
+
     # GUI
     ${SRC_DIR}/gui/database_editor_panel.cpp
     ${SRC_DIR}/gui/welcome_panel.cpp

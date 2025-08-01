@@ -20,10 +20,9 @@ private:
     TableSchemaGridMode mode_;
     DatabaseTableManager* tb_manager_;
     void append_new_row() override;
-    void commit_cell(int row, int col, const std::string& new_value) override;
+    void commit_cell(int row, int col, const std::string& new_value, const std::string& prev_value) override;
     void commit_row(int row) override;
     void commit_row_delete(int row) override;
-
 
     bool is_create_mode() const {
         return mode_ == TableSchemaGridMode::CREATE_TABLE;

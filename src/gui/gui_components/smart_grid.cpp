@@ -1,34 +1,41 @@
 #include <assert.h>
 #include "smart_grid.h"
+#include "gui/event/evt_cell_commit.h"
 
 SmartGrid::SmartGrid(wxWindow* parent)
     : wxGrid(parent, wxID_ANY)
 {
-    Bind(wxEVT_GRID_CELL_LEFT_CLICK, [=, this](wxGridEvent& event) {
-        int row = event.GetRow();
-        int col = event.GetCol();
+    // Bind(wxEVT_GRID_CELL_LEFT_CLICK, [=, this](wxGridEvent& event) {
+    //     int row = event.GetRow();
+    //     int col = event.GetCol();
 
-        wxGridCellEditor* editor = GetCellEditor(row, col);
-        if (dynamic_cast<wxGridCellBoolEditor*>(editor) != nullptr) {
-            wxString val = GetCellValue(row, col);
-            SetCellValue(row, col, val == "1" ? "0" : "1");
-            event.Skip(false);  // skip prevents the default double-click behavior
-        } else {
-            event.Skip();  // let other cells behave normally
-        }
-    });
-    Bind(wxEVT_CHAR_HOOK, [this](wxKeyEvent& event) {
-        if (event.GetKeyCode() == WXK_BACK) {
-            if (IsCellEditControlEnabled()) event.Skip();
-            int row = GetGridCursorRow();
-            int col = GetGridCursorCol();
-            if (row >= 0 && col >= 0) {
-                SetCellValue(row, col, "");
-            }
-            return;
-        }
-        event.Skip();
-    });
+    //     wxGridCellEditor* editor = GetCellEditor(row, col);
+    //     if (dynamic_cast<wxGridCellBoolEditor*>(editor) != nullptr) {
+    //         wxString val = GetCellValue(row, col);
+    //         SetCellValue(row, col, val == "1" ? "0" : "1");
+    //         event.Skip(false);  // skip prevents the default double-click behavior
+    //     } else {
+    //         event.Skip();  // let other cells behave normally
+    //     }
+    // });
+
+    Bind(wxEVT_GRID_CELL_CHANGED, &SmartGrid::on_grid_cell_change, this);
+    Bind(wxEVT_GRID_CELL_LEFT_CLICK, &SmartGrid::on_grid_cell_lclick, this);
+
+// TODO
+    // Bind(wxEVT_CHAR_HOOK, [this](wxKeyEvent& event) {
+    //     if (event.GetKeyCode() == WXK_BACK) {
+    //         if (IsCellEditControlEnabled()) event.Skip();
+    //         int row = GetGridCursorRow();
+    //         int col = GetGridCursorCol();
+    //         if (row >= 0 && col >= 0) {
+    //             SetCellValue(row, col, "");
+    //         }
+    //         return;
+    //         // event.Skip();
+    //     }
+    //     event.Skip();
+    // });
 }
 
 void SmartGrid::cal_row_label_width() {
@@ -86,6 +93,12 @@ void SmartGrid::auto_assign_row_editors(int row, ColumnType type) {
     }
 }
 
+void SmartGrid::auto_assign_col_editors(int col, ColumnType type) {
+    for (size_t row = 0; row < GetNumberRows(); ++row) {
+        assign_type(row, col, type);
+    }
+}
+
 void SmartGrid::assign_type(int row, int col, ColumnType type) {
     switch (type) {
         case ColumnType::TEXT: {
@@ -95,8 +108,7 @@ void SmartGrid::assign_type(int row, int col, ColumnType type) {
         case ColumnType::BOOLEAN: {
             SetCellEditor(row, col, new wxGridCellBoolEditor());
             SetCellRenderer(row, col, new wxGridCellBoolRenderer());
-            SetCellValue(row, col, "1");
-            // SetCellValue(row, col, GetCellValue(row, col) == "1" ? "1" : "");
+            SetCellValue(row, col, GetCellValue(row, col) == "1" ? "1" : "");
             break;
         }
         case ColumnType::INTEGER: {
@@ -111,16 +123,8 @@ void SmartGrid::assign_type(int row, int col, ColumnType type) {
             SetCellEditor(row, col, new wxGridCellDateEditor());
             break;
         }
-        case ColumnType::DATETIME: {
-            SetCellEditor(row, col, new wxGridCellNumberEditor());
-            break;
-        }
-        case ColumnType::YEAR: {
-            SetCellEditor(row, col, new wxGridCellNumberEditor());
-            break;
-        }
-        case ColumnType::MONEY: {
-            SetCellEditor(row, col, new wxGridCellFloatEditor());
+        default: {
+            SetCellEditor(row, col, new wxGridCellTextEditor());
             break;
         }
     }
@@ -143,4 +147,32 @@ void SmartGrid::format() {
     cal_row_label_width();
     cal_cell_width();
     format_grid();
+}
+
+void SmartGrid::on_grid_cell_change(wxGridEvent& event) {
+    std::cout << "smart_grid_cell_triggered\n";
+    int row = event.GetRow();
+    int col = event.GetCol();
+    std::string value = GetCellValue(row, col).ToStdString();
+    std::string old_value = event.GetString().ToStdString();
+    wxPostEvent(GetParent(), EvtCellCommit(row, col, value, old_value));
+}
+
+void SmartGrid::on_grid_cell_lclick(wxGridEvent& event) {
+    int row = event.GetRow();
+    int col = event.GetCol();
+    std::string value;
+
+    auto cell_editor = dynamic_cast<wxGridCellBoolEditor*>(GetCellEditor(row, col));
+    if (cell_editor) {
+        std::cout << "smart_grid_lclick_triggered: ";
+        std::cout << event.GetEventType() << "\n";
+        std::string value = GetCellValue(row, col).ToStdString();
+        value = (value == "1") ? "0" : "1";
+        SetCellValue(row, col, value);
+        EvtCellCommit* commit_evt = new EvtCellCommit(row, col, value);
+        // wxPostEvent(GetParent(), commit_evt);
+        wxQueueEvent(GetParent(), commit_evt);
+    }
+    event.Skip();
 }

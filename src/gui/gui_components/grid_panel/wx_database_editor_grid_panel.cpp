@@ -36,8 +36,8 @@ void wxDatabaseEditorGridPanel::init_grid_cols() {
     grid_->AppendCols(col_num_);
 
     grid_->SetColLabelSize(25);
-    // grid_->SetRowLabelSize(10);
-    grid_->HideRowLabels();
+    grid_->SetRowLabelSize(10);
+    // grid_->HideRowLabels();
     grid_->SetRowLabelAlignment(wxALIGN_RIGHT, wxALIGN_CENTER);
     grid_->SetLabelFont(wxFont(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 
@@ -49,49 +49,41 @@ void wxDatabaseEditorGridPanel::init_grid_cols() {
     }
 }
 
-void wxDatabaseEditorGridPanel::update_search(const std::string& sql) {
-    remove_existing_grid_rows();
-    // update grid using query result
-
-    auto row_callback = [this](const std::vector<std::string> col_names, const std::vector<std::string>& row) {
-        int new_row = grid_->GetNumberRows();
-        grid_->AppendRows(1);
-        for (int col = 0; col < col_num_; ++col) {
-            grid_->SetCellValue(new_row, col, row[col]);
-        }
-    };
-    try {
-        db_->execute_sql(sql, row_callback);
-    } catch (const DatabaseException& e) {
-        wxLogError("Failed update grid: %s", e.what());
-    }
-
-    grid_->AutoSizeColumns();
-    grid_->AutoSizeRows();
+void wxDatabaseEditorGridPanel::update_grid() {
+    update_grid_with_sql("");
 }
 
-void wxDatabaseEditorGridPanel::update_grid() {
+void wxDatabaseEditorGridPanel::update_grid_with_sql(const std::string& sql) {
+    std::string sql_ = sql;
     remove_existing_grid_rows();
     // update grid using query result
-    std::string sql = "SELECT * FROM " + tb_manager_->get_current_table_name();
+    if (sql.empty()) 
+        sql_ = "SELECT * FROM '" + tb_manager_->get_current_table_name() + "'";
 
-    auto row_callback = [this, count = 0](const std::vector<std::string> col_names, const std::vector<std::string>& row) mutable {
-        int new_row = grid_->GetNumberRows();
-        grid_->AppendRows(1);
-        for (int col = 0; col < col_num_; ++col) {
-            grid_->SetCellValue(new_row, col, row[col]);
-        }
-        // Yield to the event loop to keep UI responsive
-        if (++count % 500 == 0) {
-            wxSafeYield();
-        }
-    };
+    grid_->BeginBatch();
     try {
-        db_->execute_sql(sql, row_callback);
+        auto row_callback = [this, count = 0](const std::vector<std::string> col_names, const std::vector<std::string>& row_value) mutable {
+            int new_row = grid_->GetNumberRows();
+            grid_->AppendRows(1);
+            for (int col = 0; col < col_num_; ++col) {
+                grid_->SetCellValue(new_row, col, row_value[col]);
+            }
+            // Yield to the event loop to keep UI responsive
+            if (++count % 500 == 0) {
+                wxSafeYield();
+            }
+        };
+        db_->execute_sql(sql_, row_callback);
     } catch (const DatabaseException& e) {
         wxLogError("Failed update grid: %s", e.what());
     }
+    grid_->EndBatch();
 
+    // Set Grid Editor
+    auto col_defs = tb_manager_->get_current_table_schema().col_defs_;
+    for (size_t col = 0; col < grid_->GetNumberCols(); ++col) {
+        grid_->auto_assign_col_editors(col, col_defs[col].type_); 
+    }
     grid_->AutoSizeColumns();
     grid_->AutoSizeRows();
 }
@@ -99,6 +91,7 @@ void wxDatabaseEditorGridPanel::update_grid() {
 void wxDatabaseEditorGridPanel::append_new_row() {
     actual_rows_++;
     grid_->AppendRows(1);
+    grid_->auto_assign_row_editors(actual_rows_ - 1, schema_);
 }
 
 std::string wxDatabaseEditorGridPanel::get_pk_value(int row) {
@@ -107,12 +100,12 @@ std::string wxDatabaseEditorGridPanel::get_pk_value(int row) {
     return pk_value.ToStdString();
 }
 
-void wxDatabaseEditorGridPanel::commit_cell(int row, int col, const std::string& new_value) {
+void wxDatabaseEditorGridPanel::commit_cell(int row, int col, const std::string& new_value, const std::string& prev_value) {
     const std::string& col_name = col_names_[col];
     std::string pk_value;
     // Change pk, prev_cell_value is prepared for this situation
     if (col == pk_index_) {
-        pk_value = prev_cell_value;
+        pk_value = prev_value;
     } else {
         pk_value = get_pk_value(row);
     }

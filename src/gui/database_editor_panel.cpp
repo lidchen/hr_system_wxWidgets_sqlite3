@@ -2,8 +2,6 @@
 #include "core/database/database_manager.h"
 #include "gui/gui_components/horizontal_panel.h"
 
-wxDEFINE_EVENT(EVT_SEARCH_QUERY, wxCommandEvent);
-
 DatabaseEditorPanel::DatabaseEditorPanel(wxWindow* parent)
     : wxPanel(parent, wxID_ANY)
 {
@@ -57,5 +55,5 @@ void DatabaseEditorPanel::on_select_table(wxCommandEvent& event) {
 void DatabaseEditorPanel::on_search(wxCommandEvent& event) {
     std::cout << "TRIGGERED\n";
     auto sql = search_panel_->build_search_sql();
-    grid_panel_->update_search(sql);
+    grid_panel_->update_grid_with_sql(sql);
 }

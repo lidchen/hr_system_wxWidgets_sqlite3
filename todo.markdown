@@ -1,8 +1,20 @@
 # TODO
+bool input commit to db --> need btn debouncing
+
+add new line without grid_editor at db_editor --> fixed but need a better approach, currently just do auto_assign_row_editors at DatabaseEditorGridPanel, need a generic approach
+
+better stmtbuilder handle more case (especially with space, dont forget add "'" and prevent single ')
+
+db_editor inherient from smartgrid, automatically set cell editor type
+mult delete
+smart grid bind to backescape
+
+drag corner resize for smart grid
+app logic -> alter current database
+tb manager update col dont update at db_editor
+
 search order config
 import_dlg
-
-auto manage col width(make sure use all space)
 
 Global commit and rollback feature
     eg: Start a transaction when manager_dialog showup, press cancel -> rollback, press ok -> commit
